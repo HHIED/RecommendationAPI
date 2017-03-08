@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace RecommendationAPI.Business
 {
-    interface IDatabaseEngine
+    public interface IDatabaseEngine
     {
 
         Visitor GetVisitor(string visitorUID);

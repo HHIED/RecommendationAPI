@@ -6,6 +6,13 @@ using System.Threading.Tasks;
 namespace RecommendationAPI.Business
 {
     public class ProductRecommender : IProductRecommender {
+
+        public IDatabaseEngine _db;
+
+        public ProductRecommender(IDatabaseEngine db) {
+            _db = db;
+        }
+
         public string[] GetProductRecommendations(string VisitorUID) {
             throw new NotImplementedException();
         }
