@@ -1,6 +1,7 @@
 ﻿using System;
 using Xunit;
 using RecommendationAPI.Business;
+using System.Diagnostics;
 
 namespace Tests
 {
@@ -39,8 +40,10 @@ namespace Tests
         [Fact]
         public void testGetVisitor() {
             DatabaseEngine dbe = new DatabaseEngine();
-            Visitor visitor = dbe.GetVisitor("4D9FC023-9034-4B93-96D8-000013AB1940", "PandaShop").Result;
-            Assert.Equal("4D9FC023-9034-4B93-96D8-000013AB1940", visitor.UID);
+            Visitor visitor = dbe.GetVisitor("AAF995AE-1DD0-41C6-898B-9cbee884e553".ToUpper(), "PandaShop").Result;
+            string[] wanted = new string[] { "241", "1014", "43215" };
+            Assert.Equal(wanted, pr.GetTopThreeProducts(visitor));
+            Assert.Equal("AAF995AE-1DD0-41C6-898B-9cbee884e553".ToUpper(), visitor.UID);
         }
     }
 }

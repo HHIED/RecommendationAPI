@@ -2,6 +2,7 @@
 using RecommendationAPI.Business;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using static RecommendationAPI.Business.Behavior;
@@ -14,7 +15,7 @@ namespace RecommendationAPI.Utility
             return new Visitor(visitorUID, profileUID, customerUID, behaviors);
         }
 
-        public Behavior CreateBehaviorTest(string type, string id, DateTime timeStamp) {
+        public Behavior CreateBehaviorTest(string type, string id, string timeStamp) {
             return new Behavior(type, id, timeStamp);
         }
 
@@ -24,11 +25,11 @@ namespace RecommendationAPI.Utility
             List<Behavior> behaviors = new List<Behavior>();
             BsonArray bsonBehaviors = visitorDoc["Behaviors"].AsBsonArray;
 
-            foreach(BsonArray ba in bsonBehaviors) {
+            foreach(BsonDocument bd in bsonBehaviors.Values) {
                 try {
-                    behaviors.Add(new Behavior(ba["Type"].AsString, ba["Id"].AsString, ba["Timestamp"].AsDateTime));
+                    behaviors.Add(new Behavior(bd["Type"].AsString, bd["Id"].AsString, bd["Timestamp"].AsString));
                 } catch(InvalidCastException exception) {
-                    Console.WriteLine(exception.Data);
+                    Debug.WriteLine(exception.Data);
                 }
             }
 

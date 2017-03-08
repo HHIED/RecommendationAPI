@@ -8,7 +8,7 @@ namespace RecommendationAPI.Business
     public class Behavior {
         private string _type;
         private string _id;
-        private DateTime _timeStamp;
+        private string _timeStamp;
 
         public string Type
         {
@@ -36,7 +36,7 @@ namespace RecommendationAPI.Business
             }
         }
 
-        public DateTime TimeStamp
+        public string TimeStamp
         {
             get
             {
@@ -49,7 +49,7 @@ namespace RecommendationAPI.Business
             }
         }
 
-        public Behavior(string _type, string _id, DateTime _timeStamp) {
+        public Behavior(string _type, string _id, string _timeStamp) {
             this.Type = _type;
             this.Id = _id;
             this.TimeStamp = _timeStamp;

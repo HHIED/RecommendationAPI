@@ -24,7 +24,7 @@ namespace RecommendationAPI.Business
             _database = _client.GetDatabase("Pandashop");
             var collection = _database.GetCollection<BsonDocument>("Visitor");
             var filter = Builders<BsonDocument>.Filter.Eq("_id", visitorUID);
-            List<BsonDocument> result = collection.Find(filter).ToList();
+            List<BsonDocument> result = await collection.Find(filter).ToListAsync();
 
             return factory.CreateVisitor(result);
         }

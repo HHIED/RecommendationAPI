@@ -42,6 +42,12 @@ namespace RecommendationAPI.Business
             var temp = from entry in products orderby entry.Value descending select entry;
             Dictionary<string, int> sortedDic = temp.ToDictionary(pair => pair.Key, pair => pair.Value);
 
+            List<string> result = new List<string>();
+
+            foreach(string s in sortedDic.Keys) {
+                result.Add(s);
+            }
+
             return new string[] { sortedDic.Keys.ElementAt(0), sortedDic.Keys.ElementAt(1), sortedDic.Keys.ElementAt(2) };
         }
     }
