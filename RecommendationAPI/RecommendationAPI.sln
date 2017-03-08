@@ -12,6 +12,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "RecommendationAPI", "src\RecommendationAPI\RecommendationAPI.xproj", "{58979F87-890B-4B94-9D91-B01D063BD1F6}"
 EndProject
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "APITest", "APITest\APITest.xproj", "{045D9BBD-A9C7-4C8B-A6B6-019E01F7F502}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -22,6 +24,10 @@ Global
 		{58979F87-890B-4B94-9D91-B01D063BD1F6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{58979F87-890B-4B94-9D91-B01D063BD1F6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{58979F87-890B-4B94-9D91-B01D063BD1F6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{045D9BBD-A9C7-4C8B-A6B6-019E01F7F502}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{045D9BBD-A9C7-4C8B-A6B6-019E01F7F502}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{045D9BBD-A9C7-4C8B-A6B6-019E01F7F502}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{045D9BBD-A9C7-4C8B-A6B6-019E01F7F502}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

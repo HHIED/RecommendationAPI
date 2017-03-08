@@ -6,12 +6,11 @@ using System.Threading.Tasks;
 namespace RecommendationAPI.Business
 {
     public class Behavior {
-        public enum BehaviorTypes { ProductView, ProductGroupView, BrandView, VariantView };
-        private BehaviorTypes _type;
+        private string _type;
         private string _id;
         private DateTime _timeStamp;
 
-        public BehaviorTypes Type
+        public string Type
         {
             get
             {
@@ -50,7 +49,7 @@ namespace RecommendationAPI.Business
             }
         }
 
-        public Behavior(BehaviorTypes _type, string _id, DateTime _timeStamp) {
+        public Behavior(string _type, string _id, DateTime _timeStamp) {
             this.Type = _type;
             this.Id = _id;
             this.TimeStamp = _timeStamp;

@@ -8,9 +8,9 @@ namespace RecommendationAPI.Business
     public interface IDatabaseEngine
     {
 
-        Visitor GetVisitor(string visitorUID);
+        Task<Visitor> GetVisitor(string visitorUID, string database);
 
-        Visitor[] GetVisitors(string productUID);
+        Visitor[] GetVisitors(string productUID, string database);
 
     }
 }

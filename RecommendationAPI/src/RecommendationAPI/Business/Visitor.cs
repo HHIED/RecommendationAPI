@@ -7,20 +7,21 @@ namespace RecommendationAPI.Business
 {
     public class Visitor
     {
-        private string _UID;
-        private string _ProfileUID;
-        private string _CustomerUID;
+        private string _uID;
+        private string _profileUID;
+        private string _customerUID;
+        private List<Behavior> _behaviors;
 
         public string UID
         {
             get
             {
-                return _UID;
+                return _uID;
             }
 
             set
             {
-                _UID = value;
+                _uID = value;
             }
         }
 
@@ -28,12 +29,12 @@ namespace RecommendationAPI.Business
         {
             get
             {
-                return _ProfileUID;
+                return _profileUID;
             }
 
             set
             {
-                _ProfileUID = value;
+                _profileUID = value;
             }
         }
 
@@ -41,21 +42,33 @@ namespace RecommendationAPI.Business
         {
             get
             {
-                return _CustomerUID;
+                return _customerUID;
             }
 
             set
             {
-                _CustomerUID = value;
+                _customerUID = value;
             }
         }
 
-        public Visitor(string uID, string profileUID, string customerUID) {
-            _UID = uID;
-            _ProfileUID = profileUID;
-            _CustomerUID = customerUID;
+        public List<Behavior> Behaviors
+        {
+            get
+            {
+                return _behaviors;
+            }
+
+            set
+            {
+                _behaviors = value;
+            }
         }
 
-
+        public Visitor(string _uID, string _profileUID, string _customerUID, List<Behavior> _behaviors) {
+            this.UID = _uID;
+            this.ProfileUID = _profileUID;
+            this.CustomerUID = _customerUID;
+            this.Behaviors = _behaviors;
+        }
     }
 }
