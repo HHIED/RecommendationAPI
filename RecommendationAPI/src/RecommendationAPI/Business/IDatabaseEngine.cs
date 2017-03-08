@@ -5,8 +5,12 @@ using System.Threading.Tasks;
 
 namespace RecommendationAPI.Business
 {
-    interface IProductRecommender
+    interface IDatabaseEngine
     {
-        string[] GetProductRecommendations(string VisitorUID);
+
+        Visitor GetVisitor(string visitorUID);
+
+        Visitor[] GetVisitors(string productUID);
+
     }
 }
