@@ -29,13 +29,11 @@ namespace RecommendationAPI.Business {
             return factory.CreateVisitor(result);
         }
 
-        public async Task<List<Visitor>> GetVisitors(int[] productUID, string database) {
+        public async Task<List<BsonArray>> GetVisitors(int[] productUID, string database) {
             _database = _client.GetDatabase(database);
             var collection = _database.GetCollection<BsonDocument>("Product");
             List<BsonArray> visitorLists = new List<BsonArray>();
-            List<string> visitorListsFinal = new List<string>();
-            Stopwatch s = new Stopwatch();
-            s.Start();
+
             foreach (int productId in productUID) {
                 var builder = Builders<BsonDocument>.Filter;
                 var filter = builder.Eq("_id", productId);
@@ -43,22 +41,8 @@ namespace RecommendationAPI.Business {
                 BsonDocument bd = result.ElementAt(0);
                 BsonArray vistorIds = bd["VisitorId"].AsBsonArray;
                 visitorLists.Add(vistorIds);
-            }
-            foreach (BsonArray b in visitorLists) {
-                foreach (BsonValue bv in b) {
-                    visitorListsFinal.Add(bv.AsString);
-                }
-            }
-            var duplicateKeys = visitorListsFinal.GroupBy(x => x)
-                        .Where(group => group.Count() > visitorLists.Count-1)
-                        .Select(group => group.Key);
-            List<Visitor> MatchingVisitors = new List<Visitor>();
-            foreach(string visitorUID in duplicateKeys) {
-                MatchingVisitors.Add(GetVisitor(visitorUID, database).Result);
-            }
-            Debug.WriteLine("Matching visitors: " + MatchingVisitors.Count);
-            Debug.WriteLine("Time: " + s.ElapsedMilliseconds);
-            return MatchingVisitors;
+            }           
+            return visitorLists;
         }
     }
 }

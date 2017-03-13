@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using MongoDB.Bson;
 
 namespace RecommendationAPI.Business
 {
@@ -10,7 +11,7 @@ namespace RecommendationAPI.Business
 
         Task<Visitor> GetVisitor(string visitorUID, string database);
 
-        Task<List<Visitor>> GetVisitors(int[] productUID, string database);
+        Task<List<BsonArray>> GetVisitors(int[] productUID, string database);
 
     }
 }
