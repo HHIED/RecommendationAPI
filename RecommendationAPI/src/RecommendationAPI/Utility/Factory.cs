@@ -32,8 +32,11 @@ namespace RecommendationAPI.Utility
                     Debug.WriteLine(exception.Data);
                 }
             }
-
-            return new Visitor(visitorDoc["_id"].AsString, visitorDoc["ProfileUID"].AsString, visitorDoc["CustomerUID"].AsString, behaviors);
+            if (visitorDoc["ProfileUID"] != BsonNull.Value && visitorDoc["CustomerUID"] != BsonNull.Value) {
+                return new Visitor(visitorDoc["_id"].AsString, visitorDoc["ProfileUID"].AsString, visitorDoc["CustomerUID"].AsString, behaviors);
+            } else {
+                return new Visitor(visitorDoc["_id"].AsString, null, null, behaviors);
+            }
         }
     }
 }

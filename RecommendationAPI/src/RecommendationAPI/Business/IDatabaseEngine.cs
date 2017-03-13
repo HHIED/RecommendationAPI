@@ -10,7 +10,7 @@ namespace RecommendationAPI.Business
 
         Task<Visitor> GetVisitor(string visitorUID, string database);
 
-        Visitor[] GetVisitors(string productUID, string database);
+        Task<List<Visitor>> GetVisitors(int[] productUID, string database);
 
     }
 }

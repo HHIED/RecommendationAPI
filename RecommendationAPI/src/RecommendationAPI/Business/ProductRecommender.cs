@@ -32,10 +32,12 @@ namespace RecommendationAPI.Business
         public string[] GetTopThreeProducts(Visitor visitor) {
             Dictionary<string, int> products = new Dictionary<string, int>();
             foreach(Behavior b in visitor.Behaviors){
-                if (products.ContainsKey(b.Id)) {
-                    products[b.Id]++;
-                } else {
-                    products.Add(b.Id, 1);
+                if (b.Type == "ProductView") {
+                    if (products.ContainsKey(b.Id)) {
+                        products[b.Id]++;
+                    } else {
+                        products.Add(b.Id, 1);
+                    }
                 }
             }
 
