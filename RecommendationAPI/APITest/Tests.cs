@@ -93,8 +93,8 @@ namespace Tests
         [Theory]
         [Repeat(5)]
         public void getRecommendationsTest() {
-            string[] recommendations = pr.GetProductRecommendations("AAF995AE-1DD0-41C6-898B-9cbee884e553", 5, "Pandashop");
-            Debug.WriteLine(recommendations.ToString());
+            string[] recommendations = pr.GetProductRecommendations("AAF995AE-1DD0-41C6-898B-9cbee884e553".ToUpper(), 5, "Pandashop");
+            Debug.WriteLine(recommendations[0] + " 2: " + recommendations[1] + " 3: " + recommendations[2] + " 4: " + recommendations[3] + " 5: " + recommendations[4]);
             Assert.Equal("knep", "knep");
         }
 
