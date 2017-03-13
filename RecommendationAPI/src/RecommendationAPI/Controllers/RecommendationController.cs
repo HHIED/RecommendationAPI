@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using RecommendationAPI.Business;
 
 // For more information on enabling Web API for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -11,11 +12,14 @@ namespace RecommendationAPI.Controllers
     [Route("api/[controller]")]
     public class RecommendationController : Controller
     {
+
+        private ProductRecommender pr = new ProductRecommender();
+
         // GET api/recommendation/getRecommendation?visitorUID=""
-        [Route("getRecommendation")]
-        [HttpGet("{visitorID}")]
-        public string[] GetRecommendationForVisitor(string visitorUID) {
-            return new string[0];
+        [Route("/{visitorUID}/{numberOfRecommendations}/{database}")]
+        [HttpGet("{visitorUID}/{numberOfRecommendations}/{database}")]
+        public string[] GetRecommendationForVisitor(string visitorUID, int numberOfRecommendations, string database) {
+            return pr.GetProductRecommendations(visitorUID, numberOfRecommendations, database);
         }
 
         // POST api/values

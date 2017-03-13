@@ -10,8 +10,8 @@ namespace RecommendationAPI.Business
 
         public IDatabaseEngine _db;
 
-        public ProductRecommender(IDatabaseEngine db) {
-            _db = db;
+        public ProductRecommender() {
+            _db = new DatabaseEngine();
         }
 
         public string[] GetProductRecommendations(string visitorUID, int numberOfRecommendations, string database) {

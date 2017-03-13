@@ -52,7 +52,7 @@ namespace Tests
 
             //mockVisitor = new Visitor("visitor1", "profile1", "customer1", mockBehavior);
 
-            pr = new ProductRecommender(new DatabaseEngine());
+            pr = new ProductRecommender();
         }
         [Fact]
         public void getTopThreeProductsTest() 
@@ -93,7 +93,7 @@ namespace Tests
         [Theory]
         [Repeat(5)]
         public void getRecommendationsTest() {
-            string[] recommendations = pr.GetProductRecommendations("AAF995AE-1DD0-41C6-898B-9cbee884e553".ToUpper(), 5, "Pandashop");
+            string[] recommendations = pr.GetProductRecommendations("AAF995AE-1DD0-41C6-898B-9CBEE884E553".ToUpper(), 5, "Pandashop");
             Debug.WriteLine(recommendations[0] + " 2: " + recommendations[1] + " 3: " + recommendations[2] + " 4: " + recommendations[3] + " 5: " + recommendations[4]);
             Assert.Equal("knep", "knep");
         }
