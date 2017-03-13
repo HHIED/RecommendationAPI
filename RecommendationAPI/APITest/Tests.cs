@@ -95,7 +95,7 @@ namespace Tests
         public void getRecommendationsTest() {
             string[] recommendations = pr.GetProductRecommendations("AAF995AE-1DD0-41C6-898B-9cbee884e553", 5, "Pandashop");
             Debug.WriteLine(recommendations.ToString());
-            
+            Assert.Equal("knep", "knep");
         }
 
 
