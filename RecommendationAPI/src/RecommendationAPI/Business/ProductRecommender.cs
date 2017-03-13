@@ -14,12 +14,12 @@ namespace RecommendationAPI.Business
             _db = db;
         }
 
-        public string[] GetProductRecommendations(string visitorUID, string database) {
+        public string[] GetProductRecommendations(string visitorUID, int numberOfRecommendations, string database) {
             Visitor visitor = _db.GetVisitor(visitorUID, database).Result;
             int[] topThreeProducts = GetTopThreeProducts(visitor);
             List<Visitor> similarVisitors = GetSimilarVisitors(topThreeProducts, database);
 
-            return GetMostPopularProducts(similarVisitors);
+            return GetMostPopularProducts(similarVisitors, numberOfRecommendations);
         }
 
         private List<Visitor> GetSimilarVisitors(int[] productUIDs, string database) {
@@ -43,13 +43,24 @@ namespace RecommendationAPI.Business
             return similarVisitors;
         }
 
-        private string[] GetMostPopularProducts(List<Visitor> visitors) {
-            throw new NotImplementedException();
+        private string[] GetMostPopularProducts(List<Visitor> visitors, int numberOfRecommendations) {
+
+            Dictionary<string, int> products = new Dictionary<string, int>();
+
+            foreach (Visitor v in visitors) {
+                products = countAndSortBehavior(v.Behaviors, products);
+            }
+
+            string[] finalRecommendations = new string[numberOfRecommendations];
+            for(int i = 0; i<numberOfRecommendations; i++) {
+                finalRecommendations[i] = products.ElementAt(i).Key;
+            }
+            return finalRecommendations;
         }
 
-        public int[] GetTopThreeProducts(Visitor visitor) {
-            Dictionary<string, int> products = new Dictionary<string, int>();
-            foreach(Behavior b in visitor.Behaviors){
+        private Dictionary<string, int> countAndSortBehavior(List<Behavior> behaviors, Dictionary<string, int> products) {
+
+            foreach (Behavior b in behaviors) {
                 if (b.Type == "ProductView") {
                     if (products.ContainsKey(b.Id)) {
                         products[b.Id]++;
@@ -60,15 +71,21 @@ namespace RecommendationAPI.Business
             }
 
             var temp = from entry in products orderby entry.Value descending select entry;
+
             Dictionary<string, int> sortedDic = temp.ToDictionary(pair => pair.Key, pair => pair.Value);
 
-            List<string> result = new List<string>();
+            return sortedDic;
 
-            foreach(string s in sortedDic.Keys) {
-                result.Add(s);
-            }
 
-            return new int[] { int.Parse(sortedDic.Keys.ElementAt(0)), int.Parse(sortedDic.Keys.ElementAt(1)), int.Parse(sortedDic.Keys.ElementAt(2)) };
+        }
+
+        public int[] GetTopThreeProducts(Visitor visitor) {
+
+            Dictionary<string, int> products = new Dictionary<string, int>();
+
+            Dictionary<string, int> sortedBehaviors = countAndSortBehavior(visitor.Behaviors, products);
+
+            return new int[] { int.Parse(sortedBehaviors.Keys.ElementAt(0)), int.Parse(sortedBehaviors.Keys.ElementAt(1)), int.Parse(sortedBehaviors.Keys.ElementAt(2)) };
         }
     }
 }

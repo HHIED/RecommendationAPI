@@ -7,6 +7,6 @@ namespace RecommendationAPI.Business
 {
     interface IProductRecommender
     {
-        string[] GetProductRecommendations(string VisitorUID, string database);
+        string[] GetProductRecommendations(string VisitorUID, int numberOfRecommendations, string database);
     }
 }
