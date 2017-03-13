@@ -19,7 +19,7 @@ namespace RecommendationAPI.Controllers
         [Route("/{visitorUID}/{numberOfRecommendations}/{database}")]
         [HttpGet("{visitorUID}/{numberOfRecommendations}/{database}")]
         public string[] GetRecommendationForVisitor(string visitorUID, int numberOfRecommendations, string database) {
-            return pr.GetProductRecommendations(visitorUID, numberOfRecommendations, database);
+            return pr.GetProductRecommendations(visitorUID.ToUpper(), numberOfRecommendations, database);
         }
 
         // POST api/values

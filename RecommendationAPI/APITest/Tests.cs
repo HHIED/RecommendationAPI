@@ -93,9 +93,13 @@ namespace Tests
         [Theory]
         [Repeat(5)]
         public void getRecommendationsTest() {
+            Stopwatch s = new Stopwatch();
+            s.Start();
             string[] recommendations = pr.GetProductRecommendations("AAF995AE-1DD0-41C6-898B-9CBEE884E553".ToUpper(), 5, "Pandashop");
+            Debug.WriteLine("Time: " + s.ElapsedMilliseconds);
             Debug.WriteLine(recommendations[0] + " 2: " + recommendations[1] + " 3: " + recommendations[2] + " 4: " + recommendations[3] + " 5: " + recommendations[4]);
-            Assert.Equal("knep", "knep");
+
+            Assert.True(true);
         }
 
 

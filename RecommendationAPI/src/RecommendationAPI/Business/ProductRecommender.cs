@@ -50,12 +50,15 @@ namespace RecommendationAPI.Business
             foreach (Visitor v in visitors) {
                 products = countAndSortBehavior(v.Behaviors, products);
             }
-
+            try { 
             string[] finalRecommendations = new string[numberOfRecommendations];
             for(int i = 0; i<numberOfRecommendations; i++) {
                 finalRecommendations[i] = products.ElementAt(i).Key;
             }
             return finalRecommendations;
+            } catch(ArgumentOutOfRangeException ex) {
+                return new string[] { "NOPE" };
+            }
         }
 
         private Dictionary<string, int> countAndSortBehavior(List<Behavior> behaviors, Dictionary<string, int> products) {
