@@ -39,7 +39,7 @@ namespace Tests
         }
 
         [Fact]
-        public void noBehaviorTest() {
+        public void noBehavior() {
 
             Assert.Equal(new string[] { "" }, pr.GetProductRecommendations("ValidVisitorNoBehavior", 5, "ValidDatabase"));
         }
