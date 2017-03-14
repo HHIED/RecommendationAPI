@@ -44,5 +44,12 @@ namespace Tests
             Assert.Equal(new string[] { "" }, pr.GetProductRecommendations("ValidVisitorNoBehavior", 5, "ValidDatabase"));
         }
 
+        [Fact]
+        public void nonExistingDatabase() {
+            Exception ex = Assert.Throws<InvalidOperationException>(() => pr.GetProductRecommendations("validVisitor", 5, "notValidDatabase"));
+
+            Assert.IsType<InvalidOperationException>(ex);
+        }
+
     }
-}
+    }
