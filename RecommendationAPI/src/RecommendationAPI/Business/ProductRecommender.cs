@@ -14,9 +14,19 @@ namespace RecommendationAPI.Business {
         }
 
         public string[] GetProductRecommendations(string visitorUID, int numberOfRecommendations, string database) {
-            Visitor visitor = _db.GetVisitor(visitorUID, database).Result;
-            List<int> topThreeProducts = GetTopThreeProducts(visitor);
-            List<Visitor> similarVisitors = GetSimilarVisitors(topThreeProducts, database);
+
+            List<Visitor> similarVisitors = null;
+            List<int> topThreeProducts;
+            Visitor visitor;
+
+            try {
+                visitor = _db.GetVisitor(visitorUID, database).Result;
+                topThreeProducts = GetTopThreeProducts(visitor);
+                similarVisitors = GetSimilarVisitors(topThreeProducts, database);
+            }catch(Exception ex) {
+                if(ex is InvalidOperationException || ex is AggregateException)
+                throw new InvalidOperationException();
+            }
 
             return GetMostPopularProducts(similarVisitors, numberOfRecommendations);
         }

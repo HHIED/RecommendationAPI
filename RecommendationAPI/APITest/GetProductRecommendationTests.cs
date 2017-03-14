@@ -13,8 +13,7 @@ using RecommendationAPI.Dummy;
 
 namespace Tests
 {
-    public class Tests
-    {
+    public class GetProductRecommendationTests {
 
         ProductRecommender pr;
 
@@ -34,7 +33,7 @@ namespace Tests
             }
         }
 
-        public Tests() {
+        public GetProductRecommendationTests() {
             pr = new ProductRecommender(new DummyDatabase());
         }
         
