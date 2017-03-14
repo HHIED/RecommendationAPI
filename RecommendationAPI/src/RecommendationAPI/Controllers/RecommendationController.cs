@@ -18,7 +18,12 @@ namespace RecommendationAPI.Controllers
         // GET api/recommendation/getRecommendation?visitorUID=""
         [Route("/{visitorUID}/{numberOfRecommendations}/{database}")]
         [HttpGet("{visitorUID}/{numberOfRecommendations}/{database}")]
-        public string[] GetRecommendationForVisitor(string visitorUID, int numberOfRecommendations, string database) {
+        public Object GetRecommendationForVisitor(string visitorUID, int numberOfRecommendations, string database) {
+
+            if(numberOfRecommendations <= 0 || numberOfRecommendations > int.MaxValue) {
+                return new BadRequestResult();
+            }
+
             return pr.GetProductRecommendations(visitorUID.ToUpper(), numberOfRecommendations, database);
         }
         
