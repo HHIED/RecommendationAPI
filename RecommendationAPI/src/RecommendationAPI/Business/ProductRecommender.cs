@@ -29,7 +29,7 @@ namespace RecommendationAPI.Business
             List<string> allMatchingVisitors = new List<string>();
             foreach (BsonArray b in productVisitors) {
                 foreach (BsonValue bv in b) {
-                    allMatchingVisitors.Add(bv.AsString);
+                    allMatchingVisitors.Add(bv.AsString.ToUpper());
                 }
             }
             var similarVisitorsUID = allMatchingVisitors.GroupBy(x => x)
