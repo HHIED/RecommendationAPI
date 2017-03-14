@@ -34,8 +34,52 @@ namespace Tests
             }
         }
 
+        ProductRecommender pr;
+
         public Tests() {
             pr = new ProductRecommender(new DummyDatabase());
+        }
+        
+        [Fact]
+        public void NonExistingVisitor() {
+            Exception ex = Assert.Throws<InvalidOperationException>(() => pr.GetProductRecommendations("noneExistingVisitorUID", 5, "ValidDatabase"));
+
+            Assert.IsType<InvalidOperationException>(ex);
+        }
+
+        [Fact]
+        public void ValidArguments() {
+            string[] validProductRecommendations = pr.GetProductRecommendations("ValidVisitor", 3, "ValidDatabase");
+
+            Assert.Equal(new string[] { "1234", "1235", "1238" }, validProductRecommendations);
+        }
+
+        [Fact]
+        public void LowerCaseVisitorUID() {
+            string[] validProductRecommendations = pr.GetProductRecommendations("validvisitor", 3, "ValidDatabase");
+
+            Assert.Equal(new string[] { "1234", "1235", "1238" }, validProductRecommendations);
+        }
+
+        [Fact]
+        public void UpperCaseVisitorUID() {
+            string[] validProductRecommendations = pr.GetProductRecommendations("VALIDVISITOR", 3, "ValidDatabase");
+
+            Assert.Equal(new string[] { "1234", "1235", "1238" }, validProductRecommendations);
+        }
+
+        [Fact]
+        public void LowerCaseDatabase() {
+            string[] validProductRecommendations = pr.GetProductRecommendations("ValidVisitor", 3, "validdatabase");
+
+            Assert.Equal(new string[] { "1234", "1235", "1238" }, validProductRecommendations);
+        }
+
+        [Fact]
+        public void UpperCaseDatabase() {
+            string[] validProductRecommendations = pr.GetProductRecommendations("ValidVisitor", 3, "VALIDDATABASE");
+
+            Assert.Equal(new string[] { "1234", "1235", "1238" }, validProductRecommendations);
         }
 
         [Fact]
