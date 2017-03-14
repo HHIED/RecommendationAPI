@@ -39,8 +39,7 @@ namespace Tests
         }
         
         [Fact]
-        public void NoneExistingVisitor() {
-
+        public void NonExistingVisitor() {
             Exception ex = Assert.Throws<InvalidOperationException>(() => pr.GetProductRecommendations("noneExistingVisitorUID", 5, "ValidDatabase"));
 
             Assert.IsType<InvalidOperationException>(ex);
