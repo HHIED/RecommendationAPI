@@ -21,7 +21,7 @@ namespace RecommendationAPI.Controllers
         public string[] GetRecommendationForVisitor(string visitorUID, int numberOfRecommendations, string database) {
             return pr.GetProductRecommendations(visitorUID.ToUpper(), numberOfRecommendations, database);
         }
-
+        
         // POST api/values
         [HttpPost]
         public void Post([FromBody]string value)
