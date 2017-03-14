@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Web.Http;
 using MongoDB.Driver;
 using MongoDB.Bson;
 using RecommendationAPI.Utility;
@@ -20,11 +21,17 @@ namespace RecommendationAPI.Business {
             _client = new MongoClient("mongodb://localhost");
             factory = new Factory();
         }
+
+        
         public async Task<Visitor> GetVisitor(string visitorUID, string database) {
-            _database = _client.GetDatabase("Pandashop");
+            _database = _client.GetDatabase(database);
             var collection = _database.GetCollection<BsonDocument>("Visitor");
             var filter = Builders<BsonDocument>.Filter.Eq("_id", visitorUID);
+            
             List<BsonDocument> result = await collection.Find(filter).ToListAsync();
+            if(result.Count == 0) {
+                throw new InvalidOperationException();
+            }
 
             return factory.CreateVisitor(result);
         }
@@ -38,10 +45,18 @@ namespace RecommendationAPI.Business {
                 var builder = Builders<BsonDocument>.Filter;
                 var filter = builder.Eq("_id", productId);
                 var result = await collection.Find(filter).ToListAsync();
-                BsonDocument bd = result.ElementAt(0);
-                BsonArray vistorIds = bd["VisitorId"].AsBsonArray;
-                visitorLists.Add(vistorIds);
-            }           
+
+                if (result.Count > 0) {
+                    BsonDocument bd = result.ElementAt(0);
+                    BsonArray vistorIds = bd["VisitorId"].AsBsonArray;
+                    visitorLists.Add(vistorIds);
+                }
+            }
+
+            if (visitorLists.Count == 0) {
+                return null;
+            }
+
             return visitorLists;
         }
     }
