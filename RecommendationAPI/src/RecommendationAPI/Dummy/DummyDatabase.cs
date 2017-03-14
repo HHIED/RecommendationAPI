@@ -28,12 +28,12 @@ namespace RecommendationAPI.Dummy {
         }
 
         public Task<Visitor> GetVisitor(string visitorUID, string database) {
-            if (database == "ValidDatabase") {
-                if (visitorUID == "ValidVisitor" || visitorUID=="VALIDVISITOR") {
+            if (database.ToUpper() == "VALIDDATABASE") {
+                if (visitorUID.ToUpper()=="VALIDVISITOR") {
                     var taskSource = new TaskCompletionSource<Visitor>();
                     taskSource.SetResult(validVisitor);
                     return taskSource.Task;
-                } else if (visitorUID == "ValidVisitorNoBehavior" || visitorUID=="VALIDVISITORNOBEHAVIOR") {
+                } else if (visitorUID.ToUpper()=="VALIDVISITORNOBEHAVIOR") {
                     var taskSource = new TaskCompletionSource<Visitor>();
                     taskSource.SetResult(visitorNoBehavior);
                     return taskSource.Task;
@@ -53,7 +53,7 @@ namespace RecommendationAPI.Dummy {
                 taskSource.SetResult(visitorList);
                 return taskSource.Task;
             }
-            if (database == "ValidDatabase") {
+            if (database.ToUpper() == "VALIDDATABASE") {
                 var taskSource = new TaskCompletionSource<List<BsonArray>>();
                 List<BsonArray> visitorList = new List<BsonArray>();
                 visitorList.Add(new BsonArray(new string[] { "ValidVisitor" }));

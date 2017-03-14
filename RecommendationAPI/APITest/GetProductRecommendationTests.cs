@@ -34,8 +34,6 @@ namespace Tests
             }
         }
 
-        ProductRecommender pr;
-
         public Tests() {
             pr = new ProductRecommender(new DummyDatabase());
         }
