@@ -10,7 +10,7 @@ namespace RecommendationAPI.Dummy
     public class DummyDatabase : IDatabaseEngine {
         public Task<Visitor> GetVisitor(string visitorUID, string database) {
             if (database == "ValidDatabase") {
-                if (visitorUID == "ValidVisitor") {
+                if (visitorUID.ToUpper() == "VALIDVISITOR") {
                     List<Behavior> behvaviors = new List<Behavior>();
                     behvaviors.Add(new Behavior("ProductView", "1234", "Time"));
                     behvaviors.Add(new Behavior("ProductView", "1234", "Time"));
