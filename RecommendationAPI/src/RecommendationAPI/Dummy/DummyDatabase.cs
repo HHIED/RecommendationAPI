@@ -8,24 +8,38 @@ using RecommendationAPI.Business;
 namespace RecommendationAPI.Dummy
 {
     public class DummyDatabase : IDatabaseEngine {
+
+        private Visitor validVisitor;
+        private Visitor visitorNoBehavior;
+
+        public DummyDatabase() {
+            List<Behavior> behvaviors = new List<Behavior>();
+            behvaviors.Add(new Behavior("ProductView", "1234", "Time"));
+            behvaviors.Add(new Behavior("ProductView", "1234", "Time"));
+            behvaviors.Add(new Behavior("ProductView", "1235", "Time"));
+            behvaviors.Add(new Behavior("ProductView", "1235", "Time"));
+            behvaviors.Add(new Behavior("ProductView", "1236", "Time"));
+            behvaviors.Add(new Behavior("ProductView", "1237", "Time"));
+            behvaviors.Add(new Behavior("ProductView", "1238", "Time"));
+            behvaviors.Add(new Behavior("ProductView", "1238", "Time"));
+            behvaviors.Add(new Behavior("ProductView", "1239", "Time"));
+            validVisitor = new Visitor("ValidVisitor", "ProfileUID", "CustomerUID", behvaviors);
+
+            visitorNoBehavior = new Visitor("NoBehavior", "ProfileUID", "CustomerUID", new List<Behavior>());
+        }
+
         public Task<Visitor> GetVisitor(string visitorUID, string database) {
             if (database == "ValidDatabase") {
-                if (visitorUID == "ValidVisitor") {
-                    List<Behavior> behvaviors = new List<Behavior>();
-                    behvaviors.Add(new Behavior("ProductView", "1234", "Time"));
-                    behvaviors.Add(new Behavior("ProductView", "1234", "Time"));
-                    behvaviors.Add(new Behavior("ProductView", "1235", "Time"));
-                    behvaviors.Add(new Behavior("ProductView", "1235", "Time"));
-                    behvaviors.Add(new Behavior("ProductView", "1236", "Time"));
-                    behvaviors.Add(new Behavior("ProductView", "1237", "Time"));
-                    behvaviors.Add(new Behavior("ProductView", "1238", "Time"));
-                    behvaviors.Add(new Behavior("ProductView", "1238", "Time"));
-                    behvaviors.Add(new Behavior("ProductView", "1239", "Time"));
-                    Visitor validVisitor = new Visitor(visitorUID, "ProfileUID", "CustomerUID0", behvaviors);
+                if (visitorUID == "ValidVisitor") {      
                     var taskSource = new TaskCompletionSource<Visitor>();
                     taskSource.SetResult(validVisitor);
                     return taskSource.Task;
-                } else {
+                } else if (visitorUID == "ValidVisitorNoBehavior") {
+                    var taskSource = new TaskCompletionSource<Visitor>();
+                    taskSource.SetResult(visitorNoBehavior);
+                    return taskSource.Task;
+                } 
+                else  {
                     throw new InvalidOperationException();
                 }
             } else {
