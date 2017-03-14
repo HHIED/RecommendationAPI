@@ -30,7 +30,7 @@ namespace RecommendationAPI.Business {
             
             List<BsonDocument> result = await collection.Find(filter).ToListAsync();
             if(result.Count == 0) {
-                throw new InvalidOperationException();
+                return null;
             }
 
             return factory.CreateVisitor(result);

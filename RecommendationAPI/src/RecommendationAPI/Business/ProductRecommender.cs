@@ -15,24 +15,26 @@ namespace RecommendationAPI.Business {
 
         public string[] GetProductRecommendations(string visitorUID, int numberOfRecommendations, string database) {
 
-            List<Visitor> similarVisitors = null;
-            List<int> topThreeProducts;
-            Visitor visitor;
-
+            Visitor visitor = _db.GetVisitor(visitorUID, database).Result;
+            if(visitor == null) {
+                return null;
+            }
+            List<int> topThreeProducts = GetTopThreeProducts(visitor);
             try {
-                visitor = _db.GetVisitor(visitorUID, database).Result;
-                topThreeProducts = GetTopThreeProducts(visitor);
-                similarVisitors = GetSimilarVisitors(topThreeProducts, database);
-            }catch(Exception ex) {
-                if(ex is InvalidOperationException || ex is AggregateException)
+                List<Visitor> similarVisitors = GetSimilarVisitors(topThreeProducts, database);
+
+                return GetMostPopularProducts(similarVisitors, numberOfRecommendations);
+
+            } catch(InvalidOperationException ioe) {
                 throw new InvalidOperationException();
             }
-
-            return GetMostPopularProducts(similarVisitors, numberOfRecommendations);
         }
 
         private List<Visitor> GetSimilarVisitors(List<int> productUIDs, string database) {
 
+            if(productUIDs.Count == 0) {
+                throw new InvalidOperationException();
+            }
 
             List<BsonArray> productVisitors = _db.GetVisitors(productUIDs, database).Result;
             List<string> allMatchingVisitors = new List<string>();
@@ -56,12 +58,19 @@ namespace RecommendationAPI.Business {
 
             Dictionary<string, int> products = new Dictionary<string, int>();
 
+            int finalNumberOfRecommendations = 0;
+
             foreach (Visitor v in visitors) {
                 products = countAndSortBehavior(v.Behaviors, products);
             }
             try {
-                string[] finalRecommendations = new string[numberOfRecommendations];
-                for (int i = 0; i < numberOfRecommendations; i++) {
+                if (numberOfRecommendations > products.Count) {
+                    finalNumberOfRecommendations = products.Count;
+                } else {
+                    finalNumberOfRecommendations = numberOfRecommendations;
+                }
+                string[] finalRecommendations = new string[finalNumberOfRecommendations];
+                for (int i = 0; i < finalNumberOfRecommendations; i++) {
                     finalRecommendations[i] = products.ElementAt(i).Key;
                 }
                 return finalRecommendations;

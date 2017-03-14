@@ -18,16 +18,19 @@ namespace RecommendationAPI.Controllers
         // GET api/recommendation/getRecommendation?visitorUID=""
         [Route("/{visitorUID}/{numberOfRecommendations}/{database}")]
         [HttpGet("{visitorUID}/{numberOfRecommendations}/{database}")]
-        public Object GetRecommendationForVisitor(string visitorUID, int numberOfRecommendations, string database) {
-            try {
-                if (numberOfRecommendations <= 0 || numberOfRecommendations > int.MaxValue) {
-                    return new BadRequestResult();
+        public string[] GetRecommendationForVisitor(string visitorUID, int numberOfRecommendations, string database) {
+
+            if (numberOfRecommendations <= 0 || numberOfRecommendations > int.MaxValue) {
+                    return null;
                 }
 
-                return pr.GetProductRecommendations(visitorUID.ToUpper(), numberOfRecommendations, database.ToUpper());
+            try {
+                string[] productRecommendation = pr.GetProductRecommendations(visitorUID.ToUpper(), numberOfRecommendations, database.ToUpper());
+                return productRecommendation;
             } catch(InvalidOperationException ioe) {
-                return new BadRequestResult();
+                return null;
             }
+            
         }
         
         // POST api/values

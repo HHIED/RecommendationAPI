@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using RecommendationAPI.Controllers;
 using Microsoft.AspNetCore.Mvc;
+using System.Diagnostics;
 
 namespace APITest
 {
@@ -17,12 +18,14 @@ namespace APITest
         private string uppercaseDatabaseName;
         private string lowercaseDatabaseName;
         private string nonExistingDatabaseName;
+        private string visitorWithoutBehaviorData;
 
         public IntegrationTests() {
             validVisitorUID = "AAF995AE-1DD0-41C6-898B-9CBEE884E553";
             nonExistingVisitorUID = "InvalidUID";
             validDatabaseName = "Pandashop";
             nonExistingDatabaseName = "InvalidDatabase";
+            visitorWithoutBehaviorData = "6820EDD0-E6A6-4105-A078-0000127E7AE1";
         }
 
         [Fact]
@@ -32,7 +35,7 @@ namespace APITest
 
         [Fact]
         public void GetProductRecommendationNonExistingVisitorUID() {
-            Assert.IsType<BadRequestResult>(rc.GetRecommendationForVisitor(nonExistingVisitorUID, 5, validDatabaseName));
+            Assert.True(rc.GetRecommendationForVisitor(nonExistingVisitorUID, 5, validDatabaseName) == null);
         }
 
         [Fact]
@@ -55,5 +58,25 @@ namespace APITest
             Assert.Equal(new string[] { "36991", "40786", "38104", "41594", "31573" }, rc.GetRecommendationForVisitor(validVisitorUID, 5, validDatabaseName.ToLower()));
         }
 
+        [Fact]
+        public void NumberOfProductRecommendationsLargerThanAvailable() {
+            Assert.Equal(56, rc.GetRecommendationForVisitor(validVisitorUID, 1000, validDatabaseName).Count<string>());
+        }
+
+        [Fact]
+        public void NumberOfProductRecommendationsLessOrEqualZero() {
+            Assert.True(rc.GetRecommendationForVisitor(validVisitorUID, 0, validDatabaseName) == null);
+            Assert.True(rc.GetRecommendationForVisitor(validVisitorUID, -15, validDatabaseName) == null);
+        }
+
+        [Fact]
+        public void NonExistingDatabase() {
+            Assert.True(rc.GetRecommendationForVisitor(validVisitorUID, 5, nonExistingDatabaseName) == null);
+        }
+
+        [Fact]
+        public void ExistingVisitorWithNoBehaviorData() {
+            Assert.Equal(null, rc.GetRecommendationForVisitor(visitorWithoutBehaviorData, 5, validDatabaseName));
+        }
     }
 }

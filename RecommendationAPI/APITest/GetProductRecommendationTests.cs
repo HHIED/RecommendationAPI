@@ -81,8 +81,9 @@ namespace Tests
 
         [Fact]
         public void noBehavior() {
+            Exception ex = Assert.Throws<InvalidOperationException>(() => pr.GetProductRecommendations("ValidVisitorNoBehavior", 5, "ValidDatabase"));
 
-            Assert.Equal(new string[] { "" }, pr.GetProductRecommendations("ValidVisitorNoBehavior", 5, "ValidDatabase"));
+            Assert.IsType<InvalidOperationException>(ex);
         }
 
         [Fact]
