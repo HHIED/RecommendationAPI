@@ -13,7 +13,7 @@ namespace RecommendationAPI.Controllers
     public class RecommendationController : Controller
     {
 
-        private ProductRecommender pr = new ProductRecommender();
+        private ProductRecommender pr = new ProductRecommender(new DatabaseEngine());
 
         // GET api/recommendation/getRecommendation?visitorUID=""
         [Route("/{visitorUID}/{numberOfRecommendations}/{database}")]

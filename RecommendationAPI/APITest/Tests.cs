@@ -52,7 +52,7 @@ namespace Tests
 
             //mockVisitor = new Visitor("visitor1", "profile1", "customer1", mockBehavior);
 
-            pr = new ProductRecommender();
+            pr = new ProductRecommender(new DatabaseEngine());
         }
         [Fact]
         public void getTopThreeProductsTest() 
