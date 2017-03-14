@@ -9,7 +9,7 @@ namespace RecommendationAPI.Dummy
 {
     public class DummyDatabase : IDatabaseEngine {
         public Task<Visitor> GetVisitor(string visitorUID, string database) {
-            if (database == "ValidDatabase") {
+            if (database.ToUpper() == "VALIDDATABASE") {
                 if (visitorUID.ToUpper() == "VALIDVISITOR") {
                     List<Behavior> behvaviors = new List<Behavior>();
                     behvaviors.Add(new Behavior("ProductView", "1234", "Time"));
@@ -34,7 +34,7 @@ namespace RecommendationAPI.Dummy
         }
 
         public Task<List<BsonArray>> GetVisitors(int[] productUID, string database) {
-            if(database=="ValidDatabase") {
+            if(database.ToUpper() == "VALIDDATABASE") {
                 var taskSource = new TaskCompletionSource<List<BsonArray>>();
                 List<BsonArray> visitorList = new List<BsonArray>();
                 visitorList.Add(new BsonArray(new string[] { "ValidVisitor" }));
