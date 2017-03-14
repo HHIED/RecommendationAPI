@@ -36,7 +36,7 @@ namespace RecommendationAPI.Business {
             return factory.CreateVisitor(result);
         }
 
-        public async Task<List<BsonArray>> GetVisitors(int[] productUID, string database) {
+        public async Task<List<BsonArray>> GetVisitors(List<int> productUID, string database) {
             _database = _client.GetDatabase(database);
             var collection = _database.GetCollection<BsonDocument>("Product");
             List<BsonArray> visitorLists = new List<BsonArray>();

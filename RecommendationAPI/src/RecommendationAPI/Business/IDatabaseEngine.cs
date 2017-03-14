@@ -11,7 +11,7 @@ namespace RecommendationAPI.Business
 
         Task<Visitor> GetVisitor(string visitorUID, string database);
 
-        Task<List<BsonArray>> GetVisitors(int[] productUID, string database);
+        Task<List<BsonArray>> GetVisitors(List<int> productUID, string database);
 
     }
 }

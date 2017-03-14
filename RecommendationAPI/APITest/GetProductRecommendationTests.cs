@@ -9,11 +9,14 @@ using Xunit.Sdk;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Linq;
+using RecommendationAPI.Dummy;
 
 namespace Tests
 {
     public class Tests
     {
+
+        ProductRecommender pr;
 
         public class RepeatAttribute : DataAttribute {
             private readonly int _count;
@@ -32,7 +35,14 @@ namespace Tests
         }
 
         public Tests() {
-            pr = new ProductRecommender(new DatabaseEngine());
+            pr = new ProductRecommender(new DummyDatabase());
         }
+
+        [Fact]
+        public void noBehaviorTest() {
+
+            Assert.Equal(new string[] { "" }, pr.GetProductRecommendations("ValidVisitorNoBehavior", 5, "ValidDatabase"));
+        }
+
     }
 }
