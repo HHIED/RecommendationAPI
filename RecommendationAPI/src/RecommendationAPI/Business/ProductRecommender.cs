@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace RecommendationAPI.Business {
     public class ProductRecommender : IProductRecommender {
 
-        public IDatabaseEngine _db;
+        private IDatabaseEngine _db;
 
         public ProductRecommender(IDatabaseEngine db) {
             _db = db;

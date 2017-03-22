@@ -59,5 +59,17 @@ namespace RecommendationAPI.Business {
 
             return visitorLists;
         }
+
+        public async void insertVisitor(string visitorUID, string database) {
+            _database = _client.GetDatabase(database);
+            var collection = _database.GetCollection<BsonDocument>("Visitor");
+            BsonDocument newVisitor = new BsonDocument {
+                {"_id",  visitorUID},
+                {"Behaviors", new BsonArray()},
+                {"ProfileUID",  ""},
+                {"CustomerUID", "" }
+            };
+            await collection.InsertOneAsync(newVisitor);
+        }
     }
 }

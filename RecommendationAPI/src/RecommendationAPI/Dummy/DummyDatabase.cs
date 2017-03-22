@@ -63,5 +63,9 @@ namespace RecommendationAPI.Dummy {
                 throw new InvalidOperationException();
             }
         }
+
+        public void insertVisitor(string visitorUID, string database) {
+            throw new NotImplementedException();
+        }
     }
 }
