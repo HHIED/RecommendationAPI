@@ -8,7 +8,8 @@ namespace RecommendationAPI.Business
     interface IDataManager
     {
 
-        void createVisitor(string visitorUID, string database);
-
+        void CreateVisitor(string visitorUID, string database);
+        void CreateProduct(Product p, string database);
+        void CreateBehavior(string visitorUID, Behavior behavior, string database);
     }
 }

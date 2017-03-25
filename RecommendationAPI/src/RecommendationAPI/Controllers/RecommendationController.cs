@@ -9,7 +9,7 @@ using RecommendationAPI.Business;
 
 namespace RecommendationAPI.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     public class RecommendationController : Controller
     {
 

@@ -7,7 +7,6 @@
     "System.Runtime.Serialization.Primitives": "4.1.1",
     "xunit": "2.2.0",
     "dotnet-test-xunit": "1.0.0-rc2-192208-24",
-    "RecommendationAPI": "1.0.0-*",
     "MongoDB.Bson": "2.4.2",
     "Microsoft.Extensions.Logging": "1.1.1",
     "Microsoft.Extensions.Logging.Console": "1.1.1"

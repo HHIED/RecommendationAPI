@@ -71,5 +71,60 @@ namespace RecommendationAPI.Business {
             };
             await collection.InsertOneAsync(newVisitor);
         }
+
+        public async void InsertProduct(Product p, string database) {
+            _database = _client.GetDatabase(database);
+            var collection = _database.GetCollection<BsonDocument>("Product");
+            BsonDocument newProduct = new BsonDocument {
+                {"_id",  p.ProductUID},
+                {"VisitorId", new BsonArray() },
+                {"Description", p.Description},
+                {"Created",  p.Created}
+            };
+            await collection.InsertOneAsync(newProduct);
+        }
+
+        public void InsertBehavior(string visitorUID, Behavior behavior, string database) {
+            insertBehaviorOnVisitor(visitorUID,  behavior, database);
+            if(behavior.Type=="PRODUCTVIEW") {
+                insertBehaviorOnProduct(visitorUID, behavior, database);
+            } else if(behavior.Type=="PRODUCTGROUPVIEW") {
+                insertBehaviorOnProductGroup(visitorUID, behavior, database);
+            }
+            
+            
+        }
+
+        private async void insertBehaviorOnProductGroup(string visitorUID, Behavior behavior, string database) {
+            _database = _client.GetDatabase(database);
+            var collection = _database.GetCollection<BsonDocument>("ProductGroup");
+            var filter = Builders<BsonDocument>.Filter.Eq("_id", behavior.Id);
+            var update = Builders<BsonDocument>.Update
+                .Push("VisitorId", visitorUID);
+            var result = await collection.UpdateOneAsync(filter, update);
+        }
+
+        private async void insertBehaviorOnProduct(string visitorUID, Behavior behavior, string database) {
+            _database = _client.GetDatabase(database);
+            var collection = _database.GetCollection<BsonDocument>("Product");
+            var filter = Builders<BsonDocument>.Filter.Eq("_id", behavior.Id);
+            var update = Builders<BsonDocument>.Update
+                .Push("VisitorId", visitorUID);
+            var result = await collection.UpdateOneAsync(filter, update);
+        }
+
+        private async void insertBehaviorOnVisitor(string visitorUID, Behavior behavior, string database) {
+            _database = _client.GetDatabase(database);
+            var collection = _database.GetCollection<BsonDocument>("Visitor");
+            var filter = Builders<BsonDocument>.Filter.Eq("_id", visitorUID);
+            BsonDocument bsonBehavior = new BsonDocument {
+                {"Timestamp", behavior.TimeStamp},
+                {"Type", behavior.Type},
+                {"Id", behavior.Id}
+            };
+            var update = Builders<BsonDocument>.Update
+                .Push("Behaviors", bsonBehavior);
+            var result = await collection.UpdateOneAsync(filter, update);
+        }
     }
 }

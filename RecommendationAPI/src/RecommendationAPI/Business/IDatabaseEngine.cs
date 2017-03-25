@@ -14,6 +14,7 @@ namespace RecommendationAPI.Business
         Task<List<BsonArray>> GetVisitors(List<int> productUID, string database);
 
         void insertVisitor(string visitorUID, string database);
-
+        void InsertBehavior(string visitorUID, Behavior behavior, string database);
+        void InsertProduct(Product p, string database);
     }
 }

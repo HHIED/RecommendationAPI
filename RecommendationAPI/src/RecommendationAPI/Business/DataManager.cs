@@ -13,7 +13,15 @@ namespace RecommendationAPI.Business
             _db = db;
         }
 
-        public void createVisitor(string visitorUID, string database) {
+        public void CreateBehavior(string visitorUID, Behavior behavior, string database) {
+            _db.InsertBehavior(visitorUID, behavior, database);
+        }
+
+        public void CreateProduct(Product p, string database) {
+            _db.InsertProduct(p, database);
+        }
+
+        public void CreateVisitor(string visitorUID, string database) {
             _db.insertVisitor(visitorUID, database);
         }
     }

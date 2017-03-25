@@ -38,5 +38,13 @@ namespace RecommendationAPI.Utility
                 return new Visitor(visitorDoc["_id"].AsString, null, null, behaviors);
             }
         }
+
+        public Product CreateProduct(string productUID, string created, string description) {
+            return new Product(productUID, created, description);
+        }
+
+        public Behavior CreateBehavior(string itemID, string behaviorType, string timestamp) {
+            return new Behavior(behaviorType, itemID, timestamp);
+        }
     }
 }

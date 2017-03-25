@@ -64,6 +64,14 @@ namespace RecommendationAPI.Dummy {
             }
         }
 
+        public void InsertBehavior(string visitorUID, Behavior behavior, string database) {
+            throw new NotImplementedException();
+        }
+
+        public void InsertProduct(Product p, string database) {
+            throw new NotImplementedException();
+        }
+
         public void insertVisitor(string visitorUID, string database) {
             throw new NotImplementedException();
         }
