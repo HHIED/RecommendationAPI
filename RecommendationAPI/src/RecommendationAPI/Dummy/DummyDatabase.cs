@@ -68,11 +68,27 @@ namespace RecommendationAPI.Dummy {
             throw new NotImplementedException();
         }
 
+        public void InsertOrder(string profileUID, string customerUID, string itemUID, string created, string database) {
+            throw new NotImplementedException();
+        }
+
         public void InsertProduct(Product p, string database) {
             throw new NotImplementedException();
         }
 
+        public void InsertProductGroup(string productGroupUID, string attributeValue, string database) {
+            throw new NotImplementedException();
+        }
+
         public void insertVisitor(string visitorUID, string database) {
+            throw new NotImplementedException();
+        }
+
+        public void UpdateCustomerData(string visitorUID, string customerUID, string database) {
+            throw new NotImplementedException();
+        }
+
+        public void UpdateProfileData(string visitorUID, string profileUID, string database) {
             throw new NotImplementedException();
         }
     }

@@ -48,5 +48,31 @@ namespace RecommendationAPI.Controllers
         public void Put(string visitorUID, string timestamp, string behaviorType, string itemID, string database) {
             dm.CreateBehavior(visitorUID, f.CreateBehavior(itemID.ToUpper(), behaviorType.ToUpper(), timestamp.ToUpper()), database.ToUpper());
         }
+
+        // PUT visitorUID/database
+        [Route("/order/{profileUID}/{customerUID}/{itemUID}/{created}/{database}")]
+        [HttpPut("{profileUID}/{customerUID}/{itemUID}/{created}/{database}")]
+        public void PutOrder(string profileUID, string customerUID, string itemUID, string created, string database) {
+            dm.CreateOrder(profileUID.ToUpper(), customerUID.ToUpper(), itemUID.ToUpper(), created.ToUpper(), database.ToUpper());
+        }
+
+        [Route("/profile/{visitorUID}/{profileUID}/{database}")]
+        [HttpPut("{visitorUID}/{profileUID}/{database}")]
+        public void PutProfile(string visitorUID, string profileUID, string database) {
+            dm.UpdateProfileData(visitorUID.ToUpper(), profileUID.ToUpper(), database.ToUpper());
+        }
+
+        [Route("/customer/{visitorUID}/{customerUID}/{database}")]
+        [HttpPut("{visitorUID}/{customerUID}/{database}")]
+        public void PutCustomer(string visitorUID, string customerUID, string database) {
+            dm.UpdateCustomerData(visitorUID.ToUpper(), customerUID.ToUpper(), database.ToUpper());
+        }
+
+        [Route("/productGroup/{productGroupUID}/{attributeValue}/{database}")]
+        [HttpPut("{productGroupUID}/{attributeValue}/{database}")]
+        public void PutProductGroup(string productGroupUID, string attributeValue, string database) {
+            dm.CreateProductGroup(productGroupUID.ToUpper(), attributeValue.ToUpper(), database.ToUpper());
+        }
+        
     }
 }

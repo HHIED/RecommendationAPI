@@ -126,5 +126,54 @@ namespace RecommendationAPI.Business {
                 .Push("Behaviors", bsonBehavior);
             var result = await collection.UpdateOneAsync(filter, update);
         }
+
+        public async void InsertOrder(string profileUID, string customerUID, string itemUID, string created, string database) {
+            _database = _client.GetDatabase(database);
+            var collection = _database.GetCollection<BsonDocument>("Customer");
+            var filter = Builders<BsonDocument>.Filter.Eq("_id", customerUID);
+            BsonDocument bsonBehavior = new BsonDocument {
+                {"ItemID", itemUID},
+                {"Created", created}
+            };
+            var update = Builders<BsonDocument>.Update
+                .Push("Orders", bsonBehavior);
+            var result = await collection.UpdateOneAsync(filter, update);
+        }
+
+        public async void UpdateProfileData(string visitorUID, string profileUID, string database) {
+            _database = _client.GetDatabase(database);
+            var collection = _database.GetCollection<BsonDocument>("Visitor");
+            var filter = Builders<BsonDocument>.Filter.Eq("_id", visitorUID);
+            var update = Builders<BsonDocument>.Update
+                .Set("ProfileUID", profileUID);
+            var result = await collection.UpdateOneAsync(filter, update);
+        }
+
+        public async void UpdateCustomerData(string visitorUID, string customerUID, string database) {
+            _database = _client.GetDatabase(database);
+            var collection = _database.GetCollection<BsonDocument>("Visitor");
+            var filter = Builders<BsonDocument>.Filter.Eq("_id", visitorUID);
+            var update = Builders<BsonDocument>.Update
+                .Set("CustomerUID", customerUID);
+            var result = await collection.UpdateOneAsync(filter, update);
+
+            var customerCollection = _database.GetCollection<BsonDocument>("Customer");
+            BsonDocument newCustomer = new BsonDocument {
+                {"_id", customerUID},
+                {"Orders", new BsonArray()}
+            };
+            await collection.InsertOneAsync(newCustomer);
+        }
+
+        public async void InsertProductGroup(string productGroupUID, string attributeValue, string database) {
+            _database = _client.GetDatabase(database);
+            var collection = _database.GetCollection<BsonDocument>("ProductGroup");
+            BsonDocument newProduct = new BsonDocument {
+                {"_id",  productGroupUID},
+                {"AttributeValue", attributeValue},
+                {"VisitorId", new BsonArray()}
+            };
+            await collection.InsertOneAsync(newProduct);
+        }
     }
 }
