@@ -37,14 +37,14 @@ namespace RecommendationAPI.Controllers
 
         // PUT product/productUID/created/description/database
         [Route("/product/{productUID}/{created}/{description}/{database}")]
-        [HttpPut("{visitorUID}/{database}")]
+        [HttpPut("{productUID}/{created}/{description}/{database}")]
         public void Put(string productUID, string created, string description, string database) {
             dm.CreateProduct(f.CreateProduct(productUID.ToUpper(), created.ToUpper(), description.ToUpper()), database.ToUpper());
         }
 
         // PUT visitorUID/database
         [Route("/behavior/{visitorUID}/{timestamp}/{behaviorType}/{itemID}/{database}")]
-        [HttpPut("{visitorUID}/{database}")]
+        [HttpPut("{visitorUID}/{timestamp}/{behaviorType}/{itemID}/{database}")]
         public void Put(string visitorUID, string timestamp, string behaviorType, string itemID, string database) {
             dm.CreateBehavior(visitorUID, f.CreateBehavior(itemID.ToUpper(), behaviorType.ToUpper(), timestamp.ToUpper()), database.ToUpper());
         }
