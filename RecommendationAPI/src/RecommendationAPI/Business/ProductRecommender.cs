@@ -19,9 +19,9 @@ namespace RecommendationAPI.Business {
             if(visitor == null) {
                 return null;
             }
-            List<int> topThreeProducts = GetTopThreeProducts(visitor);
+            Dictionary<string, double> orderedProducts = GetCalculatedProductWeights(visitor);
             try {
-                List<Visitor> similarVisitors = GetSimilarVisitors(topThreeProducts, database);
+                List<Visitor> similarVisitors = GetSimilarVisitors(orderedProducts, database);
 
                 return GetMostPopularProducts(similarVisitors, numberOfRecommendations);
 
@@ -56,7 +56,7 @@ namespace RecommendationAPI.Business {
 
         private string[] GetMostPopularProducts(List<Visitor> visitors, int numberOfRecommendations) {
 
-            Dictionary<string, int> products = new Dictionary<string, int>();
+            Dictionary<string, double> products = new Dictionary<string, double>();
 
             int finalNumberOfRecommendations = 0;
 
@@ -79,7 +79,7 @@ namespace RecommendationAPI.Business {
             }
         }
 
-        private Dictionary<string, int> countAndSortBehavior(List<Behavior> behaviors, Dictionary<string, int> products) {
+        private Dictionary<string, double> countAndSortBehavior(List<Behavior> behaviors, Dictionary<string, double> products) {
 
             foreach (Behavior b in behaviors) {
                 if (b.Type == "ProductView") {
@@ -93,28 +93,59 @@ namespace RecommendationAPI.Business {
 
             var temp = from entry in products orderby entry.Value descending select entry;
 
-            Dictionary<string, int> sortedDic = temp.ToDictionary(pair => pair.Key, pair => pair.Value);
+            Dictionary<string, double> sortedDic = temp.ToDictionary(pair => pair.Key, pair => pair.Value);
 
             return sortedDic;
 
 
         }
 
-        public List<int> GetTopThreeProducts(Visitor visitor) {
+        private Dictionary<string, double> GetCalculatedProductWeights(Visitor visitor) {
 
-            Dictionary<string, int> products = new Dictionary<string, int>();
+            Dictionary<string, double> products = new Dictionary<string, double>();
 
-            Dictionary<string, int> sortedBehaviors = countAndSortBehavior(visitor.Behaviors, products);
+            Dictionary<string, double> sortedBehaviors = countAndSortBehavior(visitor.Behaviors, products);
 
-            List<int> TopProducts = new List<int>();
+            Dictionary<string, double> productGroupWeight = GetProductGroupWeight(visitor.Behaviors);
 
-            for (int i = 0; i < 3; i++) {
-                if (sortedBehaviors.Count < i + 1) {
-                    break;
-                }
-                TopProducts.Add(int.Parse(sortedBehaviors.ElementAt(0).Key));
+            foreach(string product in sortedBehaviors.Keys) {
+                products.Add(product, sortedBehaviors[product] * productGroupWeight[product]);
             }
-            return TopProducts;
+
+            return products;
+        }
+
+        private Dictionary<string, double> GetProductGroupWeight(List<Behavior> behaviors) {
+            Dictionary<string, int> productGroups = new Dictionary<string, int>();
+
+            foreach (Behavior b in behaviors) {
+                if (b.Type == "ProductGroupView") {
+                    if (productGroups.ContainsKey(b.Id)) {
+                        productGroups[b.Id]++;
+                    } else {
+                        productGroups.Add(b.Id, 1);
+                    }
+                }
+            }
+
+            Dictionary<string, double> productGroupWeight = calculateGroupWeight(productGroups);
+
+            return productGroupWeight;
+        }
+
+        private Dictionary<string, double> calculateGroupWeight(Dictionary<string, int> productGroups) {
+            int numberOfGroupViews = 0;
+            Dictionary<string, double> productGroupWeight = new Dictionary<string, double>();
+
+            foreach(string group in productGroups.Keys) {
+                numberOfGroupViews += productGroups[group];
+            }
+
+            foreach (string group in productGroups.Keys) {
+                productGroupWeight.Add(group, productGroups[group] / numberOfGroupViews);
+            }
+
+            return productGroupWeight;
         }
     }
 }
