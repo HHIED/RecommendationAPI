@@ -126,5 +126,19 @@ namespace RecommendationAPI.Business {
                 .Push("Behaviors", bsonBehavior);
             var result = await collection.UpdateOneAsync(filter, update);
         }
+
+        public async Task<string> GetProductGroup(int productUID, string database) {
+            _database = _client.GetDatabase(database);
+            var collection = _database.GetCollection<BsonDocument>("Product");
+            List<BsonArray> visitorLists = new List<BsonArray>();
+
+            var builder = Builders<BsonDocument>.Filter;
+            var filter = builder.Eq("_id", productUID);
+            var result = await collection.Find(filter).ToListAsync();
+
+            BsonDocument bd = result.ElementAt(0);
+
+            return bd["ProductGroup"].AsString;
+        }
     }
 }

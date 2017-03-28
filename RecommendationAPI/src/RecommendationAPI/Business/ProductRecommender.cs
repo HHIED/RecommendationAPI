@@ -19,7 +19,7 @@ namespace RecommendationAPI.Business {
             if(visitor == null) {
                 return null;
             }
-            Dictionary<string, double> weightedProducts = GetCalculatedProductWeights(visitor);
+            Dictionary<string, double> weightedProducts = GetCalculatedProductWeights(visitor, database);
             List<int> orderedProducts = new List<int>();
             try {
                 foreach(string s in weightedProducts.Keys) {
@@ -38,7 +38,11 @@ namespace RecommendationAPI.Business {
         private HashSet<Visitor> GetSimilarVisitors(List<int> productUIDs, string database, HashSet<Visitor> similarVisitors) {
 
             if(productUIDs.Count == 0) {
-                throw new InvalidOperationException();
+                return similarVisitors;
+            }
+
+            if(similarVisitors.Count >= 200) {
+                return similarVisitors;
             }
 
             List<BsonArray> productVisitors = _db.GetVisitors(productUIDs, database).Result;
@@ -108,7 +112,7 @@ namespace RecommendationAPI.Business {
 
         }
 
-        private Dictionary<string, double> GetCalculatedProductWeights(Visitor visitor) {
+        private Dictionary<string, double> GetCalculatedProductWeights(Visitor visitor, string database) {
 
             Dictionary<string, double> products = new Dictionary<string, double>();
 
@@ -117,7 +121,7 @@ namespace RecommendationAPI.Business {
             Dictionary<string, double> productGroupWeight = GetProductGroupWeight(visitor.Behaviors);
 
             foreach(string product in sortedBehaviors.Keys) {
-                products.Add(product, sortedBehaviors[product] * productGroupWeight[product]);
+                products.Add(product, sortedBehaviors[product] * productGroupWeight[_db.GetProductGroup(int.Parse(product), database).Result]);
             }
 
             sortedBehaviors = countAndSortBehavior(visitor.Behaviors, products);
