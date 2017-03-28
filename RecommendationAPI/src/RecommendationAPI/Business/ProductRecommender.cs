@@ -19,9 +19,14 @@ namespace RecommendationAPI.Business {
             if(visitor == null) {
                 return null;
             }
-            Dictionary<string, double> orderedProducts = GetCalculatedProductWeights(visitor);
+            Dictionary<string, double> weightedProducts = GetCalculatedProductWeights(visitor);
+            List<int> orderedProducts = new List<int>();
             try {
-                List<Visitor> similarVisitors = GetSimilarVisitors(orderedProducts, database);
+                foreach(string s in weightedProducts.Keys) {
+                    orderedProducts.Add(int.Parse(s));
+                }
+                HashSet<Visitor> similarVisitors = new HashSet<Visitor>();
+                similarVisitors = GetSimilarVisitors(orderedProducts, database, similarVisitors);
 
                 return GetMostPopularProducts(similarVisitors, numberOfRecommendations);
 
@@ -30,7 +35,7 @@ namespace RecommendationAPI.Business {
             }
         }
 
-        private List<Visitor> GetSimilarVisitors(List<int> productUIDs, string database) {
+        private HashSet<Visitor> GetSimilarVisitors(List<int> productUIDs, string database, HashSet<Visitor> similarVisitors) {
 
             if(productUIDs.Count == 0) {
                 throw new InvalidOperationException();
@@ -46,15 +51,18 @@ namespace RecommendationAPI.Business {
             var similarVisitorsUID = allMatchingVisitors.GroupBy(x => x)
                         .Where(group => group.Count() > productVisitors.Count - 1)
                         .Select(group => group.Key);
-            List<Visitor> similarVisitors = new List<Visitor>();
             foreach (string visitorUID in similarVisitorsUID) {
                 similarVisitors.Add(_db.GetVisitor(visitorUID, database).Result);
             }
 
+            productUIDs.RemoveAt(productUIDs.Count - 1);
+
+            GetSimilarVisitors(productUIDs, database, similarVisitors);
+
             return similarVisitors;
         }
 
-        private string[] GetMostPopularProducts(List<Visitor> visitors, int numberOfRecommendations) {
+        private string[] GetMostPopularProducts(HashSet<Visitor> visitors, int numberOfRecommendations) {
 
             Dictionary<string, double> products = new Dictionary<string, double>();
 
@@ -112,7 +120,9 @@ namespace RecommendationAPI.Business {
                 products.Add(product, sortedBehaviors[product] * productGroupWeight[product]);
             }
 
-            return products;
+            sortedBehaviors = countAndSortBehavior(visitor.Behaviors, products);
+
+            return sortedBehaviors;
         }
 
         private Dictionary<string, double> GetProductGroupWeight(List<Behavior> behaviors) {
