@@ -6,7 +6,7 @@ using MongoDB.Bson;
 using RecommendationAPI.Business;
 
 namespace RecommendationAPI.Dummy {
-    public class DummyDatabase : IDatabaseEngine {
+    public class DummyDatabase/* : IDatabaseEngine*/ {
 
         private Visitor validVisitor;
         private Visitor visitorNoBehavior;

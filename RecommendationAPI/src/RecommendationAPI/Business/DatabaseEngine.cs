@@ -127,10 +127,9 @@ namespace RecommendationAPI.Business {
             var result = await collection.UpdateOneAsync(filter, update);
         }
 
-        public async Task<string> GetProductGroup(int productUID, string database) {
+        public async Task<int> GetProductGroup(int productUID, string database) {
             _database = _client.GetDatabase(database);
             var collection = _database.GetCollection<BsonDocument>("Product");
-            List<BsonArray> visitorLists = new List<BsonArray>();
 
             var builder = Builders<BsonDocument>.Filter;
             var filter = builder.Eq("_id", productUID);
@@ -138,7 +137,7 @@ namespace RecommendationAPI.Business {
 
             BsonDocument bd = result.ElementAt(0);
 
-            return bd["ProductGroup"].AsString;
+            return bd["ProductGroupId"].AsInt32;
         }
     }
 }

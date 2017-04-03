@@ -118,10 +118,12 @@ namespace RecommendationAPI.Business {
 
             Dictionary<string, double> sortedBehaviors = countAndSortBehavior(visitor.Behaviors, products);
 
-            Dictionary<string, double> productGroupWeight = GetProductGroupWeight(visitor.Behaviors);
+            Dictionary<int, double> productGroupWeight = GetProductGroupWeight(visitor.Behaviors);
 
             foreach(string product in sortedBehaviors.Keys) {
-                products.Add(product, sortedBehaviors[product] * productGroupWeight[_db.GetProductGroup(int.Parse(product), database).Result]);
+                if (!products.ContainsKey(product)) {
+                    products.Add(product, sortedBehaviors[product] * productGroupWeight[_db.GetProductGroup(int.Parse(product), database).Result]);
+                }
             }
 
             sortedBehaviors = countAndSortBehavior(visitor.Behaviors, products);
@@ -129,33 +131,33 @@ namespace RecommendationAPI.Business {
             return sortedBehaviors;
         }
 
-        private Dictionary<string, double> GetProductGroupWeight(List<Behavior> behaviors) {
-            Dictionary<string, int> productGroups = new Dictionary<string, int>();
+        private Dictionary<int, double> GetProductGroupWeight(List<Behavior> behaviors) {
+            Dictionary<int, int> productGroups = new Dictionary<int, int>();
 
             foreach (Behavior b in behaviors) {
                 if (b.Type == "ProductGroupView") {
-                    if (productGroups.ContainsKey(b.Id)) {
-                        productGroups[b.Id]++;
+                    if (productGroups.ContainsKey(int.Parse(b.Id))) {
+                        productGroups[int.Parse(b.Id)]++;
                     } else {
-                        productGroups.Add(b.Id, 1);
+                        productGroups.Add(int.Parse(b.Id), 1);
                     }
                 }
             }
 
-            Dictionary<string, double> productGroupWeight = calculateGroupWeight(productGroups);
+            Dictionary<int, double> productGroupWeight = calculateGroupWeight(productGroups);
 
             return productGroupWeight;
         }
 
-        private Dictionary<string, double> calculateGroupWeight(Dictionary<string, int> productGroups) {
+        private Dictionary<int, double> calculateGroupWeight(Dictionary<int, int> productGroups) {
             int numberOfGroupViews = 0;
-            Dictionary<string, double> productGroupWeight = new Dictionary<string, double>();
+            Dictionary<int, double> productGroupWeight = new Dictionary<int, double>();
 
-            foreach(string group in productGroups.Keys) {
+            foreach(int group in productGroups.Keys) {
                 numberOfGroupViews += productGroups[group];
             }
 
-            foreach (string group in productGroups.Keys) {
+            foreach (int group in productGroups.Keys) {
                 productGroupWeight.Add(group, productGroups[group] / numberOfGroupViews);
             }
 
