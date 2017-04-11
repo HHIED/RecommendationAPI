@@ -213,8 +213,9 @@ namespace RecommendationAPI.Business {
                 var result = await collection.UpdateOneAsync(filter, update);
 
             }
+        
 
-            }
+        }
 
         public async Task<List<string>> GetAllVisitors(string database) {
             List<string> visitors = new List<string>();
@@ -228,6 +229,7 @@ namespace RecommendationAPI.Business {
             }
             return visitors;
         }
-    }
+    
     }
 }
+
