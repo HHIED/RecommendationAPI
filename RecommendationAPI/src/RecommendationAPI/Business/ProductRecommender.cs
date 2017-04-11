@@ -116,6 +116,31 @@ namespace RecommendationAPI.Business {
             }
             return TopProducts;
         }
+
+        public void CalculateTopProducts(string visitorUID, string database) {
+
+            Visitor v = _db.GetVisitor(visitorUID, database).Result;
+            Dictionary<string, int> products = new Dictionary<string, int>();
+
+            Dictionary<string, int> sortedBehaviors = countAndSortBehavior(v.Behaviors, products);
+
+            List<int> TopProducts = new List<int>();
+
+            for (int i = 0; i < 5; i++) {
+                if (sortedBehaviors.Count < i + 1) {
+                    break;
+                }
+                TopProducts.Add(int.Parse(sortedBehaviors.ElementAt(0).Key));
+            }
+            _db.InsertTopProduct(visitorUID, TopProducts, database);
+        }
+
+        public void CalculateAllTopProducts(string database) {
+            List<string> allVisitors = _db.GetAllVisitors(database).Result;
+            foreach(string visitorUID in allVisitors) {
+                CalculateTopProducts(visitorUID, database);
+            }
+        }
     }
 }
 

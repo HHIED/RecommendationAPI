@@ -18,6 +18,7 @@ namespace RecommendationAPI.Business {
         Task<List<int>> GetVisitorProducts(string productUID, string database);
         void InsertProduct(Product p, string database);
         void InsertScore(int productUID, Dictionary<int, double> productsAndScore, string database);
-
+        void InsertTopProduct(string visitorUID, List<int> topProducts, string database);
+        Task<List<string>> GetAllVisitors(string database);
     }
 }

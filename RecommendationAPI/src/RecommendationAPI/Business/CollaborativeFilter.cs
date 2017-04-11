@@ -23,7 +23,6 @@ namespace RecommendationAPI.Business {
             Dictionary<int, double> productScores = new Dictionary<int, double>();
             BsonArray visitors = db.GetVisitorsForProduct(productUID, database).Result;
             foreach (BsonString visitorId in visitors.Values) {
-                if (visitorId != "00000000-0000-0000-0000-000000000000") {
                     List<int> visitorProducts = db.GetVisitorProducts(visitorId.AsString, database).Result;
                     if (visitorProducts != null) {
                         foreach (int product in visitorProducts) {
@@ -33,7 +32,6 @@ namespace RecommendationAPI.Business {
                                 productScores.Add(product, 1);
                             }
                         }
-                    }
                 }
             }
             Dictionary<int, double> sortedScores = CountAndSortBehavior(productScores);

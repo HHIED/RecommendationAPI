@@ -200,5 +200,34 @@ namespace RecommendationAPI.Business {
             }
             return products;
         }
+
+        public async void InsertTopProduct(string visitorUID, List<int> topProducts, string database) {
+            _database = _client.GetDatabase(database);
+            var collection = _database.GetCollection<BsonDocument>("Visitor");
+            var filter = Builders<BsonDocument>.Filter.Eq("_id", visitorUID);
+            var clear = Builders<BsonDocument>.Update.Set("TopProducts", new BsonArray());
+            var clearResult = await collection.UpdateOneAsync(filter, clear);
+            foreach (int i in topProducts) {
+                var update = Builders<BsonDocument>.Update
+                  .Push("TopProducts", i);
+                var result = await collection.UpdateOneAsync(filter, update);
+
+            }
+
+            }
+
+        public async Task<List<string>> GetAllVisitors(string database) {
+            List<string> visitors = new List<string>();
+            _database = _client.GetDatabase(database);
+            var collection = _database.GetCollection<BsonDocument>("Visitor");
+
+            var result = await collection.Find(_ => true).ToListAsync();
+            for (int i = 0; i < result.Count; i++) {
+                BsonDocument visitor = result[i];
+                visitors.Add(visitor["_id"].AsString);
+            }
+            return visitors;
+        }
+    }
     }
 }

@@ -16,6 +16,7 @@ namespace RecommendationAPI.Controllers {
         private IDataManager dm = new DataManager(new DatabaseEngine());
         private Factory f = new Factory();
         private CollaborativeFilter cf = new CollaborativeFilter();
+        private IProductRecommender pr = new ProductRecommender(new DatabaseEngine());
 
 
         [Route("/{visitorUID}")]
@@ -53,6 +54,15 @@ namespace RecommendationAPI.Controllers {
         public void GetUpdate(string database, string password) {
             if (password == "supersecretpassword") {
                 cf.BuildCollaborativeFilter(database.ToUpper());
+            }
+        }
+
+        // GET "Updatevisitortopproducts/database/password
+        [Route("/updatevisitortopproducts/{database}/{password}")]
+        [HttpGet("{database}/{password}")]
+        public void GetUpdateVisitorTopProducts(string database, string password) {
+            if (password == "supersecretpassword") {
+                pr.CalculateAllTopProducts(database);
             }
         }
     }
