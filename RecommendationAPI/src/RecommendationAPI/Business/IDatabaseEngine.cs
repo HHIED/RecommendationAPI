@@ -15,10 +15,12 @@ namespace RecommendationAPI.Business {
         Task<Product> GetProduct(int productUID, string database);
         void insertVisitor(string visitorUID, string database);
         void InsertBehavior(string visitorUID, Behavior behavior, string database);
+        Task<List<int>> GetTopProducts(string visitorUID, string database);
         Task<List<int>> GetVisitorProducts(string productUID, string database);
         void InsertProduct(Product p, string database);
         void InsertScore(int productUID, Dictionary<int, double> productsAndScore, string database);
         void InsertTopProduct(string visitorUID, List<int> topProducts, string database);
         Task<List<string>> GetAllVisitors(string database);
+        Task<Dictionary<int, double>> GetTopProductRecommendation(int productUID, string database);
     }
 }

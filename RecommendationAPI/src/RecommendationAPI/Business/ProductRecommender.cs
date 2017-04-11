@@ -1,6 +1,7 @@
 ﻿using MongoDB.Bson;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -19,15 +20,32 @@ namespace RecommendationAPI.Business {
             if(visitor == null) {
                 return null;
             }
-            List<int> topThreeProducts = GetTopThreeProducts(visitor);
-            try {
-                List<Visitor> similarVisitors = GetSimilarVisitors(topThreeProducts, database);
+            List<int> topVisitorProducts = _db.GetTopProducts(visitorUID, database).Result;
+            return GetRecommendations(topVisitorProducts, numberOfRecommendations, database);
+        }
 
-                return GetMostPopularProducts(similarVisitors, numberOfRecommendations);
+        private string[] GetRecommendations(List<int> topVisitorProducts, int numberOfRecommendations, string database) {
+            Dictionary<int, double> recommendations = new Dictionary<int, double>();
+            foreach(int product in topVisitorProducts) {
+                Dictionary<int, double> topProductRecommendation = _db.GetTopProductRecommendation(product, database).Result;
+                foreach(int recommendation in topProductRecommendation.Keys) {
+                    if(recommendations.Keys.Contains(recommendation)) {
+                        recommendations[recommendation] += topProductRecommendation[recommendation];
+                    } else {
+                        recommendations.Add(recommendation, topProductRecommendation[recommendation]);
 
-            } catch(InvalidOperationException ioe) {
-                throw new InvalidOperationException();
+                    }
+                }
             }
+            Dictionary<int, double> finalRecommendation = SortRecommendation(recommendations);
+            if(finalRecommendation.Count < numberOfRecommendations) {
+                numberOfRecommendations = finalRecommendation.Count;
+            }
+            string[] finalResult = new string[numberOfRecommendations];
+            for (int i = 0; i < numberOfRecommendations; i++) {
+                finalResult[i] = finalRecommendation.Keys.ElementAt(i).ToString();
+            }
+            return finalResult;
         }
 
         private List<Visitor> GetSimilarVisitors(List<int> productUIDs, string database) {
@@ -96,25 +114,23 @@ namespace RecommendationAPI.Business {
             Dictionary<string, int> sortedDic = temp.ToDictionary(pair => pair.Key, pair => pair.Value);
 
             return sortedDic;
+        }
 
 
+        private Dictionary<int, double> SortRecommendation(Dictionary<int, double> products) {
+
+
+
+            var temp = from entry in products orderby entry.Value descending select entry;
+
+            Dictionary<int, double> sortedDic = temp.ToDictionary(pair => pair.Key, pair => pair.Value);
+
+            return sortedDic;
         }
 
         public List<int> GetTopThreeProducts(Visitor visitor) {
-
-            Dictionary<string, int> products = new Dictionary<string, int>();
-
-            Dictionary<string, int> sortedBehaviors = countAndSortBehavior(visitor.Behaviors, products);
-
-            List<int> TopProducts = new List<int>();
-
-            for (int i = 0; i < 3; i++) {
-                if (sortedBehaviors.Count < i + 1) {
-                    break;
-                }
-                TopProducts.Add(int.Parse(sortedBehaviors.ElementAt(0).Key));
-            }
-            return TopProducts;
+            return null;
+            
         }
 
         public void CalculateTopProducts(string visitorUID, string database) {
@@ -130,15 +146,18 @@ namespace RecommendationAPI.Business {
                 if (sortedBehaviors.Count < i + 1) {
                     break;
                 }
-                TopProducts.Add(int.Parse(sortedBehaviors.ElementAt(0).Key));
+                TopProducts.Add(int.Parse(sortedBehaviors.ElementAt(i).Key));
             }
             _db.InsertTopProduct(visitorUID, TopProducts, database);
         }
 
         public void CalculateAllTopProducts(string database) {
             List<string> allVisitors = _db.GetAllVisitors(database).Result;
+            int count = 0;
             foreach(string visitorUID in allVisitors) {
                 CalculateTopProducts(visitorUID, database);
+                Debug.WriteLine("Visitor " + count + " Updated");
+                count++;
             }
         }
     }

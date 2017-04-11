@@ -39,6 +39,14 @@ namespace RecommendationAPI.Dummy {
             throw new NotImplementedException();
         }
 
+        public Task<Dictionary<int, double>> GetTopProductRecommendation(int productUID, string database) {
+            throw new NotImplementedException();
+        }
+
+        public Task<List<int>> GetTopProducts(string visitorUID, string database) {
+            throw new NotImplementedException();
+        }
+
         public Task<Visitor> GetVisitor(string visitorUID, string database) {
             if (database.ToUpper() == "VALIDDATABASE") {
                 if (visitorUID.ToUpper()=="VALIDVISITOR") {

@@ -62,7 +62,7 @@ namespace RecommendationAPI.Controllers {
         [HttpGet("{database}/{password}")]
         public void GetUpdateVisitorTopProducts(string database, string password) {
             if (password == "supersecretpassword") {
-                pr.CalculateAllTopProducts(database);
+                pr.CalculateAllTopProducts(database.ToUpper());
             }
         }
     }

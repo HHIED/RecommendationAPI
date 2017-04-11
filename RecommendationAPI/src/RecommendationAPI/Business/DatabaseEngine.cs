@@ -229,7 +229,36 @@ namespace RecommendationAPI.Business {
             }
             return visitors;
         }
-    
+
+        public async Task<List<int>> GetTopProducts(string visitorUID, string database) {
+            List<int> topProducts = new List<int>();
+            _database = _client.GetDatabase(database);
+            var collection = _database.GetCollection<BsonDocument>("Visitor");
+            var builder = Builders<BsonDocument>.Filter;
+            var filter = builder.Eq("_id", visitorUID);
+            var result = await collection.Find(filter).ToListAsync();
+            BsonDocument visitor = result[0].AsBsonDocument;
+            foreach (BsonInt32 productId in visitor["TopProducts"].AsBsonArray) {
+                topProducts.Add(productId.AsInt32);
+            }
+
+            return topProducts;
+        }
+
+        public async Task<Dictionary<int, double>> GetTopProductRecommendation(int productUID, string database) {
+            Dictionary<int, double> topProducts = new Dictionary<int, double>();
+            _database = _client.GetDatabase(database);
+            var collection = _database.GetCollection<BsonDocument>("Product");
+            var builder = Builders<BsonDocument>.Filter;
+            var filter = builder.Eq("_id", productUID);
+            var result = await collection.Find(filter).ToListAsync();
+            BsonDocument visitor = result[0];
+            foreach (BsonDocument productAndScore in visitor["TopProducts"].AsBsonArray) {
+                topProducts.Add(productAndScore["ProductUID"].AsInt32, productAndScore["Score"].AsDouble);
+            }
+
+            return topProducts;
+        }
     }
 }
 
