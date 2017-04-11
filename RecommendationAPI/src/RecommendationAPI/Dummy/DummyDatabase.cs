@@ -27,6 +27,14 @@ namespace RecommendationAPI.Dummy {
             visitorNoBehavior = new Visitor("NoBehavior", "ProfileUID", "CustomerUID", new List<Behavior>());
         }
 
+        public Task<List<int>> GetAllProducts(string database) {
+            throw new NotImplementedException();
+        }
+
+        public Task<Product> GetProduct(int productUID, string database) {
+            throw new NotImplementedException();
+        }
+
         public Task<Visitor> GetVisitor(string visitorUID, string database) {
             if (database.ToUpper() == "VALIDDATABASE") {
                 if (visitorUID.ToUpper()=="VALIDVISITOR") {
@@ -43,6 +51,10 @@ namespace RecommendationAPI.Dummy {
             } else {
                 throw new InvalidOperationException();
             }
+        }
+
+        public Task<List<int>> GetVisitorProducts(string productUID, string database) {
+            throw new NotImplementedException();
         }
 
         public Task<List<BsonArray>> GetVisitors(List<int> productUID, string database) {
@@ -64,11 +76,19 @@ namespace RecommendationAPI.Dummy {
             }
         }
 
+        public Task<BsonArray> GetVisitorsForProduct(int productUID, string database) {
+            throw new NotImplementedException();
+        }
+
         public void InsertBehavior(string visitorUID, Behavior behavior, string database) {
             throw new NotImplementedException();
         }
 
         public void InsertProduct(Product p, string database) {
+            throw new NotImplementedException();
+        }
+
+        public void InsertScore(int productUID, Dictionary<int, double> productsAndScore, string database) {
             throw new NotImplementedException();
         }
 

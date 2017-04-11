@@ -7,10 +7,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using static RecommendationAPI.Business.Behavior;
 
-namespace RecommendationAPI.Utility
-{
-    public class Factory
-    {
+namespace RecommendationAPI.Utility {
+    public class Factory {
         public Visitor CreateVisitorTest(string visitorUID, string profileUID, string customerUID, List<Behavior> behaviors) {
             return new Visitor(visitorUID, profileUID, customerUID, behaviors);
         }
@@ -25,10 +23,10 @@ namespace RecommendationAPI.Utility
             List<Behavior> behaviors = new List<Behavior>();
             BsonArray bsonBehaviors = visitorDoc["Behaviors"].AsBsonArray;
 
-            foreach(BsonDocument bd in bsonBehaviors.Values) {
+            foreach (BsonDocument bd in bsonBehaviors.Values) {
                 try {
                     behaviors.Add(new Behavior(bd["Type"].AsString, bd["Id"].AsString, bd["Timestamp"].AsString));
-                } catch(InvalidCastException exception) {
+                } catch (InvalidCastException exception) {
                     Debug.WriteLine(exception.Data);
                 }
             }
@@ -39,8 +37,12 @@ namespace RecommendationAPI.Utility
             }
         }
 
-        public Product CreateProduct(string productUID, string created, string description) {
-            return new Product(productUID, created, description);
+        public Product CreateProduct(int productUID, string created, string description, int productGroup) {
+            return new Product(productUID, created, description, productGroup);
+        }
+
+        public Product CreateProduct(BsonDocument product) {
+            return new Product(product["_id"].AsInt32, product["Created"].AsString, product["Description"].AsString, product["ProductGroupId"].AsInt32);
         }
 
         public Behavior CreateBehavior(string itemID, string behaviorType, string timestamp) {
