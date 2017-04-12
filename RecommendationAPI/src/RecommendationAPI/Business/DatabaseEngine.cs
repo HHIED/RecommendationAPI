@@ -221,7 +221,6 @@ namespace RecommendationAPI.Business {
             List<string> visitors = new List<string>();
             _database = _client.GetDatabase(database);
             var collection = _database.GetCollection<BsonDocument>("Visitor");
-
             var result = await collection.Find(_ => true).ToListAsync();
             for (int i = 0; i < result.Count; i++) {
                 BsonDocument visitor = result[i];
