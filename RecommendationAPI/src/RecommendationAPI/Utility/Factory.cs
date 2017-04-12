@@ -13,7 +13,7 @@ namespace RecommendationAPI.Utility {
             return new Visitor(visitorUID, profileUID, customerUID, behaviors);
         }
 
-        public Behavior CreateBehaviorTest(string type, string id, string timeStamp) {
+        public Behavior CreateBehaviorTest(string type, string id, DateTime timeStamp) {
             return new Behavior(type, id, timeStamp);
         }
 
@@ -24,10 +24,12 @@ namespace RecommendationAPI.Utility {
             BsonArray bsonBehaviors = visitorDoc["Behaviors"].AsBsonArray;
 
             foreach (BsonDocument bd in bsonBehaviors.Values) {
-                try {
-                    behaviors.Add(new Behavior(bd["Type"].AsString, bd["Id"].AsString, bd["Timestamp"].AsString));
-                } catch (InvalidCastException exception) {
-                    Debug.WriteLine(exception.Data);
+                if (bd["Type"] == "PRODUCTVIEW") {
+                    try {
+                        behaviors.Add(new Behavior(bd["Type"].AsString, bd["Id"].AsString, bd["Timestamp"].ToUniversalTime()));
+                    } catch (InvalidCastException exception) {
+                        Debug.WriteLine(exception.Data);
+                    }
                 }
             }
             if (visitorDoc["ProfileUID"] != BsonNull.Value && visitorDoc["CustomerUID"] != BsonNull.Value) {
@@ -37,16 +39,16 @@ namespace RecommendationAPI.Utility {
             }
         }
 
-        public Product CreateProduct(int productUID, string created, string description, int productGroup) {
-            return new Product(productUID, created, description, productGroup);
+        public Product CreateProduct(int productUID, string description, int productGroup) {
+            return new Product(productUID, DateTime.Now, description, productGroup);
         }
 
         public Product CreateProduct(BsonDocument product) {
-            return new Product(product["_id"].AsInt32, product["Created"].AsString, product["Description"].AsString, product["ProductGroupId"].AsInt32);
+            return new Product(product["_id"].AsInt32, product["Created"].ToUniversalTime(), product["Description"].AsString, product["ProductGroupId"].AsInt32);
         }
 
-        public Behavior CreateBehavior(string itemID, string behaviorType, string timestamp) {
-            return new Behavior(behaviorType, itemID, timestamp);
+        public Behavior CreateBehavior(string itemID, string behaviorType) {
+            return new Behavior(behaviorType, itemID, DateTime.Now);
         }
     }
 }

@@ -7,7 +7,7 @@ namespace RecommendationAPI.Business {
     public class Product {
 
         private int _productUID;
-        private string _created;
+        private DateTime _created;
         private string _description;
         private int _productGroup;
 
@@ -24,7 +24,7 @@ namespace RecommendationAPI.Business {
             }
         }
 
-        public string Created
+        public DateTime Created
         {
             get
             {
@@ -63,7 +63,7 @@ namespace RecommendationAPI.Business {
             }
         }
 
-        public Product(int _productUID, string _created, string _description, int _productGroup) {
+        public Product(int _productUID, DateTime _created, string _description, int _productGroup) {
             this.ProductUID = _productUID;
             this.Created = _created;
             this.Description = _description;

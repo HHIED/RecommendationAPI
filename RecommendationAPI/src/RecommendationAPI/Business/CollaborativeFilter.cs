@@ -90,6 +90,13 @@ namespace RecommendationAPI.Business {
 
         }
 
+        public void RecalculateProductScores(string visitorUID, string database) {
+            List<int> visitorProducts = db.GetVisitorProducts(visitorUID, database).Result;
+            foreach(int product in visitorProducts) {
+                CalculateScoreForProduct(product, database);
+            }
+        }
+
 
     }
 }

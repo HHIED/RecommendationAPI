@@ -100,7 +100,7 @@ namespace RecommendationAPI.Business {
         private Dictionary<string, int> countAndSortBehavior(List<Behavior> behaviors, Dictionary<string, int> products) {
 
             foreach (Behavior b in behaviors) {
-                if (b.Type == "ProductView") {
+                if (b.Type == "PRODUCTVIEW") {
                     if (products.ContainsKey(b.Id)) {
                         products[b.Id]++;
                     } else {

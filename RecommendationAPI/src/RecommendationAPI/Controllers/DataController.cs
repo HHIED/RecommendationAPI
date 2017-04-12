@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using RecommendationAPI.Business;
 using RecommendationAPI.Utility;
+using System.Web.Http;
 
 // For more information on enabling Web API for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -35,17 +36,19 @@ namespace RecommendationAPI.Controllers {
         }
 
         // PUT product/productUID/created/description/database
-        [Route("/product/{productUID}/{created}/{description}/{productgroup}/{database}")]
-        [HttpPut("{productUID}/{created}/{description}/{productgroup}/{database}")]
-        public void Put(int productUID, string created, string description, int productgroup, string database) {
-            dm.CreateProduct(f.CreateProduct(productUID, created.ToUpper(), description.ToUpper(), productgroup), database.ToUpper());
+        [Route("/product/{productUID}/{description}/{productgroup}/{database}")]
+        [HttpPut("{productUID}/{description}/{productgroup}/{database}")]
+        public void Put(int productUID, string description, int productgroup, string database) {
+            dm.CreateProduct(f.CreateProduct(productUID, description.ToUpper(), productgroup), database.ToUpper());
         }
 
         // PUT visitorUID/database
-        [Route("/behavior/{visitorUID}/{timestamp}/{behaviorType}/{itemID}/{database}")]
-        [HttpPut("{visitorUID}/{timestamp}/{behaviorType}/{itemID}/{database}")]
-        public void Put(string visitorUID, string timestamp, string behaviorType, string itemID, string database) {
-            dm.CreateBehavior(visitorUID, f.CreateBehavior(itemID.ToUpper(), behaviorType.ToUpper(), timestamp.ToUpper()), database.ToUpper());
+        [Route("/behavior/{visitorUID}/{behaviorType}/{itemID}/{database}")]
+        [HttpPut("{visitorUID}/{behaviorType}/{itemID}/{database}")]
+        public void Put(string visitorUID, string behaviorType, string itemID, string database) {
+            dm.CreateBehavior(visitorUID, f.CreateBehavior(itemID.ToUpper(), behaviorType.ToUpper()), database.ToUpper());
+            pr.CalculateTopProducts(visitorUID, database);
+            cf.RecalculateProductScores(visitorUID, database);
         }
 
         // GET "Update/database/password

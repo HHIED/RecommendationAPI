@@ -29,9 +29,6 @@ namespace RecommendationAPI.Business {
             var filter = Builders<BsonDocument>.Filter.Eq("_id", visitorUID);
 
             List<BsonDocument> result = await collection.Find(filter).ToListAsync();
-            if (result.Count == 0) {
-                return null;
-            }
 
             return factory.CreateVisitor(result);
         }
@@ -79,7 +76,7 @@ namespace RecommendationAPI.Business {
                 {"_id",  p.ProductUID},
                 {"VisitorId", new BsonArray() },
                 {"Description", p.Description},
-                {"Created",  p.Created}
+                {"Created",  new BsonDateTime(DateTime.Now)}
             };
             await collection.InsertOneAsync(newProduct);
         }
@@ -159,7 +156,7 @@ namespace RecommendationAPI.Business {
             if (result != null) {
                 BsonDocument visitor = result[0];
                 foreach (BsonDocument behavior in visitor["Behaviors"].AsBsonArray) {
-                    if (behavior["Type"].AsString == "ProductView") {
+                    if (behavior["Type"].AsString == "PRODUCTVIEW") {
                         visitorProducts.Add(int.Parse(behavior["Id"].AsString));
                     }
                 }

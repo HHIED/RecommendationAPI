@@ -13,15 +13,15 @@ namespace RecommendationAPI.Dummy {
 
         public DummyDatabase() {
             List<Behavior> behvaviors = new List<Behavior>();
-            behvaviors.Add(new Behavior("ProductView", "1234", "Time"));
-            behvaviors.Add(new Behavior("ProductView", "1234", "Time"));
-            behvaviors.Add(new Behavior("ProductView", "1235", "Time"));
-            behvaviors.Add(new Behavior("ProductView", "1235", "Time"));
-            behvaviors.Add(new Behavior("ProductView", "1236", "Time"));
-            behvaviors.Add(new Behavior("ProductView", "1237", "Time"));
-            behvaviors.Add(new Behavior("ProductView", "1238", "Time"));
-            behvaviors.Add(new Behavior("ProductView", "1238", "Time"));
-            behvaviors.Add(new Behavior("ProductView", "1239", "Time"));
+            behvaviors.Add(new Behavior("PRODUCTVIEW", "1234", DateTime.Now));
+            behvaviors.Add(new Behavior("PRODUCTVIEW", "1234", DateTime.Now));
+            behvaviors.Add(new Behavior("PRODUCTVIEW", "1235", DateTime.Now));
+            behvaviors.Add(new Behavior("PRODUCTVIEW", "1235", DateTime.Now));
+            behvaviors.Add(new Behavior("PRODUCTVIEW", "1236", DateTime.Now));
+            behvaviors.Add(new Behavior("PRODUCTVIEW", "1237", DateTime.Now));
+            behvaviors.Add(new Behavior("PRODUCTVIEW", "1238", DateTime.Now));
+            behvaviors.Add(new Behavior("PRODUCTVIEW", "1238", DateTime.Now));
+            behvaviors.Add(new Behavior("PRODUCTVIEW", "1239", DateTime.Now));
             validVisitor = new Visitor("ValidVisitor", "ProfileUID", "CustomerUID", behvaviors);
 
             visitorNoBehavior = new Visitor("NoBehavior", "ProfileUID", "CustomerUID", new List<Behavior>());
