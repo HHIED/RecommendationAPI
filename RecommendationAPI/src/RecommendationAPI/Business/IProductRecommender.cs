@@ -10,5 +10,6 @@ namespace RecommendationAPI.Business
         string[] GetProductRecommendations(string VisitorUID, int numberOfRecommendations, string database);
         void CalculateTopProducts(string visitorUID, string database);
         void CalculateAllTopProducts(string database);
+        void CalculateMonthlyTop(string database, DateTime from);
     }
 }

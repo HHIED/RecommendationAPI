@@ -160,6 +160,21 @@ namespace RecommendationAPI.Business {
                 count++;
             }
         }
+
+        public void CalculateMonthlyTop(string database, DateTime from) {
+            List<Behavior> monthlyBehaviors = _db.GetMonthlyBehaviors(database, from).Result;
+            Dictionary<string, int> behaviors = new Dictionary<string, int>();
+            Dictionary<string, int> sortedBehaviors = countAndSortBehavior(monthlyBehaviors, behaviors);
+            int length = 20;
+            if(sortedBehaviors.Count < length) {
+                length = sortedBehaviors.Count;
+            }
+            List<string> top20Products = new List<string>();
+            for (int i = 0; i < length; i++) {
+                top20Products.Add(sortedBehaviors.Keys.ElementAt(i));
+            }
+            _db.StoreTop20Products(top20Products, database);
+        }
     }
 }
 

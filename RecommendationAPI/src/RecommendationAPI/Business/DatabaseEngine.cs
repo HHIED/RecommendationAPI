@@ -11,7 +11,7 @@ using System.Diagnostics;
 namespace RecommendationAPI.Business {
     public class DatabaseEngine : IDatabaseEngine {
 
-        private MongoServerAddress address = new MongoServerAddress("mongodb://127.0.0.1");
+        private MongoServerAddress address = new MongoServerAddress("mongodb://0.0.0.0");
         private IMongoClient _client;
         private IMongoDatabase _database;
         private Factory factory;
@@ -254,6 +254,43 @@ namespace RecommendationAPI.Business {
             }
 
             return topProducts;
+        }
+
+        public async Task<List<Behavior>> GetMonthlyBehaviors(string database, DateTime from) {
+            _database = _client.GetDatabase(database);
+            var collection = _database.GetCollection<BsonDocument>("Visitor");
+            var filter = Builders<BsonDocument>.Filter.Gte("Behaviors.Timestamp", from);
+            var result = await collection.Find(filter).ToListAsync();
+
+            List<Behavior> monthlyBehaviors = new List<Behavior>();
+            foreach(BsonDocument visitor in result) {
+                foreach(BsonDocument behavior in visitor["Behaviors"].AsBsonArray) {
+                    monthlyBehaviors.Add(factory.CreateBehavior(behavior["Id"].AsString, behavior["Type"].AsString));
+                }
+            }
+            return monthlyBehaviors;
+        }
+
+        public async void StoreTop20Products(List<string> top20Products, string database) {
+            _database = _client.GetDatabase(database);
+            var collection = _database.GetCollection<BsonDocument>("MonthlyTop20");
+            var filter = Builders<BsonDocument>.Filter.Eq("_id", "top20");
+            var exists = await collection.Find(filter).ToListAsync();
+            if (exists.Count <= 0) {
+                BsonDocument top20 = new BsonDocument {
+                {"_id",  "top20"},
+                {"TopProducts", new BsonArray() }
+            };
+                collection.InsertOne(top20);
+            }
+            var clear = Builders<BsonDocument>.Update.Set("TopProducts", new BsonArray());
+            var clearResult = await collection.UpdateOneAsync(filter, clear);
+            foreach (string i in top20Products) {
+                var update = Builders<BsonDocument>.Update
+                  .Push("TopProducts", i);
+                var result = await collection.UpdateOneAsync(filter, update);
+
+            }
         }
     }
 }
