@@ -30,6 +30,10 @@ namespace RecommendationAPI.Business {
 
             List<BsonDocument> result = await collection.Find(filter).ToListAsync();
 
+            if(result.Count == 0) {
+                throw new InvalidOperationException();
+            }
+
             return factory.CreateVisitor(result);
         }
 
@@ -290,6 +294,37 @@ namespace RecommendationAPI.Business {
                   .Push("TopProducts", i);
                 var result = await collection.UpdateOneAsync(filter, update);
 
+            }
+        }
+
+       public async Task<List<string>> GetMonthlyTopProducts(string database) {
+            _database = _client.GetDatabase(database);
+            var collection = _database.GetCollection<BsonDocument>("MonthlyTop20");
+            var filter = Builders<BsonDocument>.Filter.Eq("_id", "top20");
+            var result = await collection.Find(filter).ToListAsync();
+
+            BsonDocument products = result[0];
+
+            List<string> topProducts = new List<string>();
+
+            foreach(BsonString bs in products["TopProducts"].AsBsonArray) {
+                topProducts.Add((bs.AsString));
+            }
+
+            return topProducts;
+        }
+
+        public bool CheckForDatabase(string database) {
+
+            var dbList = Enumerate(_client.ListDatabases()).Select(db => db.GetValue("name").AsString);
+            return dbList.Contains(database);
+        }
+
+        private IEnumerable<BsonDocument> Enumerate(IAsyncCursor<BsonDocument> docs) {
+            while (docs.MoveNext()) {
+                foreach (var item in docs.Current) {
+                    yield return item;
+                }
             }
         }
     }

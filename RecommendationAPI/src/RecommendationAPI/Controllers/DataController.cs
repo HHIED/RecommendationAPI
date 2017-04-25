@@ -78,5 +78,15 @@ namespace RecommendationAPI.Controllers {
                 pr.CalculateMonthlyTop(database.ToUpper(), today.AddDays(-30));
             }
         }
+
+        // GET "calculateTop20/database/password
+        [Route("/calculatetop20test/{database}/{password}")]
+        [HttpGet("{database}/{password}")]
+        public void CalculateTop20Test(string database, string password) {
+            if (password == "supersecretpassword") {
+                DateTime today = new DateTime(2017, 3, 1);
+                pr.CalculateMonthlyTop(database.ToUpper(), today.AddDays(-30));
+            }
+        }
     }
 }

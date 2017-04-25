@@ -13,15 +13,26 @@ namespace RecommendationAPI.Business {
         public ProductRecommender(IDatabaseEngine db) {
             _db = db;
         }
-
+        
         public string[] GetProductRecommendations(string visitorUID, int numberOfRecommendations, string database) {
 
-            Visitor visitor = _db.GetVisitor(visitorUID, database).Result;
-            if(visitor == null) {
-                return null;
+            if (!_db.CheckForDatabase(database)) {
+                return new string[0];
             }
-            List<int> topVisitorProducts = _db.GetTopProducts(visitorUID, database).Result;
-            return GetRecommendations(topVisitorProducts, numberOfRecommendations, database);
+
+            try {
+                Visitor visitor = _db.GetVisitor(visitorUID, database).Result;
+
+                List<int> topVisitorProducts = _db.GetTopProducts(visitorUID, database).Result;
+
+                if (topVisitorProducts.Count <= 0) {
+                    return GetMonthlyTopProducts(database, numberOfRecommendations).ToArray();
+                }
+
+                return GetRecommendations(topVisitorProducts, numberOfRecommendations, database);
+            }catch(AggregateException ae) {
+                return GetMonthlyTopProducts(database, numberOfRecommendations).ToArray();
+            }
         }
 
         private string[] GetRecommendations(List<int> topVisitorProducts, int numberOfRecommendations, string database) {
@@ -39,10 +50,10 @@ namespace RecommendationAPI.Business {
             }
             Dictionary<int, double> finalRecommendation = SortRecommendation(recommendations);
             if(finalRecommendation.Count < numberOfRecommendations) {
-                numberOfRecommendations = finalRecommendation.Count;
+                finalRecommendation = FillFromDefault(finalRecommendation, database, numberOfRecommendations);
             }
-            string[] finalResult = new string[numberOfRecommendations];
-            for (int i = 0; i < numberOfRecommendations; i++) {
+            string[] finalResult = new string[finalRecommendation.Count];
+            for (int i = 0; i < finalRecommendation.Count; i++) {
                 finalResult[i] = finalRecommendation.Keys.ElementAt(i).ToString();
             }
             return finalResult;
@@ -174,6 +185,41 @@ namespace RecommendationAPI.Business {
                 top20Products.Add(sortedBehaviors.Keys.ElementAt(i));
             }
             _db.StoreTop20Products(top20Products, database);
+        }
+
+        private List<string> GetMonthlyTopProducts(string database, int numberOfRecommendations) {
+            List<string> top20Products = _db.GetMonthlyTopProducts(database).Result;
+            List<string> result = new List<string>();
+
+            if (numberOfRecommendations > 20) {
+                numberOfRecommendations = 20;
+            }
+
+            for(int i = 0; i < numberOfRecommendations; i++) {
+                result.Add(top20Products[i]);
+            }
+
+            return result;
+        }
+
+        private Dictionary<int, double> FillFromDefault(Dictionary<int, double> recommendations, string database, int numberOfRecommendations) {
+            List<string> topProducts = GetMonthlyTopProducts(database, 20);
+
+            int i = 0;
+
+            while(recommendations.Count < numberOfRecommendations) {
+                if (i >= topProducts.Count) {
+                    break;
+                }
+
+                if (!recommendations.ContainsKey(int.Parse(topProducts[i]))) {
+                    recommendations.Add(int.Parse(topProducts[i]), 1);
+                }
+                
+                i++;
+            }
+
+            return recommendations;
         }
     }
 }

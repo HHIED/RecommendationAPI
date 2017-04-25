@@ -24,5 +24,7 @@ namespace RecommendationAPI.Business {
         Task<Dictionary<int, double>> GetTopProductRecommendation(int productUID, string database);
         Task<List<Behavior>> GetMonthlyBehaviors(string database, DateTime from);
         void StoreTop20Products(List<string> top20Products, string database);
+        Task<List<string>> GetMonthlyTopProducts(string database);
+        bool CheckForDatabase(string databse);
     }
 }

@@ -27,6 +27,10 @@ namespace RecommendationAPI.Dummy {
             visitorNoBehavior = new Visitor("NoBehavior", "ProfileUID", "CustomerUID", new List<Behavior>());
         }
 
+        public bool CheckForDatabase(string databse) {
+            throw new NotImplementedException();
+        }
+
         public Task<List<int>> GetAllProducts(string database) {
             throw new NotImplementedException();
         }
@@ -36,6 +40,10 @@ namespace RecommendationAPI.Dummy {
         }
 
         public Task<List<Behavior>> GetMonthlyBehaviors(string database, DateTime from) {
+            throw new NotImplementedException();
+        }
+
+        public Task<List<string>> GetMonthlyTopProducts(string database) {
             throw new NotImplementedException();
         }
 
