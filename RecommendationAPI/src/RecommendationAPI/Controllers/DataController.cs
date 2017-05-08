@@ -35,7 +35,7 @@ namespace RecommendationAPI.Controllers {
             dm.CreateVisitor(visitorUID.ToUpper(), database.ToUpper());
         }
 
-        // PUT product/productUID/created/description/database
+        // PUT product/productUID/description/productGroup/database
         [Route("/product/{productUID}/{description}/{productgroup}/{database}")]
         [HttpPut("{productUID}/{description}/{productgroup}/{database}")]
         public void Put(int productUID, string description, int productgroup, string database) {
