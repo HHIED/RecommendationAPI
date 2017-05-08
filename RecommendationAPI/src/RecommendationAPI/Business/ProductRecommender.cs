@@ -51,9 +51,12 @@ namespace RecommendationAPI.Business {
             Dictionary<int, double> finalRecommendation = SortRecommendation(recommendations);
             if(finalRecommendation.Count < numberOfRecommendations) {
                 finalRecommendation = FillFromDefault(finalRecommendation, database, numberOfRecommendations);
+                if(finalRecommendation.Count < numberOfRecommendations) {
+                    numberOfRecommendations = finalRecommendation.Count;
+                }
             }
-            string[] finalResult = new string[finalRecommendation.Count];
-            for (int i = 0; i < finalRecommendation.Count; i++) {
+            string[] finalResult = new string[numberOfRecommendations];
+            for (int i = 0; i < numberOfRecommendations; i++) {
                 finalResult[i] = finalRecommendation.Keys.ElementAt(i).ToString();
             }
             return finalResult;
