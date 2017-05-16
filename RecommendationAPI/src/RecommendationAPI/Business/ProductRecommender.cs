@@ -62,30 +62,6 @@ namespace RecommendationAPI.Business {
             return finalResult;
         }
 
-        private List<Visitor> GetSimilarVisitors(List<int> productUIDs, string database) {
-
-            if(productUIDs.Count == 0) {
-                throw new InvalidOperationException();
-            }
-
-            List<BsonArray> productVisitors = _db.GetVisitors(productUIDs, database).Result;
-            List<string> allMatchingVisitors = new List<string>();
-            foreach (BsonArray b in productVisitors) {
-                foreach (BsonValue bv in b) {
-                    allMatchingVisitors.Add(bv.AsString.ToUpper());
-                }
-            }
-            var similarVisitorsUID = allMatchingVisitors.GroupBy(x => x)
-                        .Where(group => group.Count() > productVisitors.Count - 1)
-                        .Select(group => group.Key);
-            List<Visitor> similarVisitors = new List<Visitor>();
-            foreach (string visitorUID in similarVisitorsUID) {
-                similarVisitors.Add(_db.GetVisitor(visitorUID, database).Result);
-            }
-
-            return similarVisitors;
-        }
-
         private string[] GetMostPopularProducts(List<Visitor> visitors, int numberOfRecommendations) {
 
             Dictionary<string, int> products = new Dictionary<string, int>();

@@ -20,14 +20,6 @@ namespace RecommendationAPI.Controllers {
         private IProductRecommender pr = new ProductRecommender(new DatabaseEngine());
 
 
-        [Route("/{visitorUID}")]
-        [HttpGet("{visitorUID}")]
-        public string[] GetRecommendationForVisitor(string visitorUID) {
-
-            return new string[] { visitorUID };
-
-        }
-
         // PUT visitor/visitorUID/database
         [Route("/visitor/{visitorUID}/{database}")]
         [HttpPut("{visitorUID}/{database}")]
