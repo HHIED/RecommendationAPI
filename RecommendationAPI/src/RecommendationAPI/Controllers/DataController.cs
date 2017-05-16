@@ -47,8 +47,9 @@ namespace RecommendationAPI.Controllers {
         [HttpPut("{visitorUID}/{behaviorType}/{itemID}/{database}")]
         public void Put(string visitorUID, string behaviorType, string itemID, string database) {
             dm.CreateBehavior(visitorUID, f.CreateBehavior(itemID.ToUpper(), behaviorType.ToUpper()), database.ToUpper());
-          //  pr.CalculateTopProducts(visitorUID, database);
-          //  cf.RecalculateProductScores(visitorUID, database);
+            pr.CalculateTopProducts(visitorUID, database.ToUpper());
+            cf.CalculateScoreForProduct(int.Parse(itemID), database.ToUpper());
+          
         }
 
         // GET "Update/database/password
@@ -66,6 +67,15 @@ namespace RecommendationAPI.Controllers {
         public void GetUpdateVisitorTopProducts(string database, string password) {
             if (password == "supersecretpassword") {
                 pr.CalculateAllTopProducts(database.ToUpper());
+            }
+        }
+
+        // GET "Updatevisitortopproducts/visitorUID/database/password
+        [Route("/updatevisitortopproducts/{visitorUID}/{database}/{password}")]
+        [HttpGet("{database}/{visitorUID}/{password}")]
+        public void GetUpdateVisitorTopProducts(string database, string visitorUID, string password) {
+            if (password == "supersecretpassword") {
+                pr.CalculateTopProducts(visitorUID.ToUpper(), database.ToUpper());
             }
         }
 
