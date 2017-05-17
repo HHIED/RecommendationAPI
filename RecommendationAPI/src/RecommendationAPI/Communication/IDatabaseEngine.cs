@@ -23,7 +23,7 @@ namespace RecommendationAPI.Business {
         Task<List<string>> GetAllVisitors(string database);
         Task<Dictionary<int, double>> GetTopProductRecommendation(int productUID, string database);
         Task<List<Behavior>> GetMonthlyBehaviors(string database, DateTime from);
-        void StoreTop20Products(List<string> top20Products, string database);
+        void StoreTop20Products(List<int> top20Products, string database);
         Task<List<string>> GetMonthlyTopProducts(string database);
         bool CheckForDatabase(string databse);
     }

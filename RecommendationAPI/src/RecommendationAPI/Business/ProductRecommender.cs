@@ -64,7 +64,7 @@ namespace RecommendationAPI.Business {
 
         private string[] GetMostPopularProducts(List<Visitor> visitors, int numberOfRecommendations) {
 
-            Dictionary<string, int> products = new Dictionary<string, int>();
+            Dictionary<int, int> products = new Dictionary<int, int>();
 
             int finalNumberOfRecommendations = 0;
 
@@ -79,7 +79,7 @@ namespace RecommendationAPI.Business {
                 }
                 string[] finalRecommendations = new string[finalNumberOfRecommendations];
                 for (int i = 0; i < finalNumberOfRecommendations; i++) {
-                    finalRecommendations[i] = products.ElementAt(i).Key;
+                    finalRecommendations[i] = products.ElementAt(i).Key.ToString();
                 }
                 return finalRecommendations;
             } catch (ArgumentOutOfRangeException ex) {
@@ -87,7 +87,7 @@ namespace RecommendationAPI.Business {
             }
         }
 
-        private Dictionary<string, int> countAndSortBehavior(List<Behavior> behaviors, Dictionary<string, int> products) {
+        private Dictionary<int, int> countAndSortBehavior(List<Behavior> behaviors, Dictionary<int, int> products) {
 
             foreach (Behavior b in behaviors) {
                 if (b.Type == "PRODUCTVIEW") {
@@ -101,7 +101,7 @@ namespace RecommendationAPI.Business {
 
             var temp = from entry in products orderby entry.Value descending select entry;
 
-            Dictionary<string, int> sortedDic = temp.ToDictionary(pair => pair.Key, pair => pair.Value);
+            Dictionary<int, int> sortedDic = temp.ToDictionary(pair => pair.Key, pair => pair.Value);
 
             return sortedDic;
         }
@@ -126,9 +126,9 @@ namespace RecommendationAPI.Business {
         public void CalculateTopProducts(string visitorUID, string database) {
 
             Visitor v = _db.GetVisitor(visitorUID, database).Result;
-            Dictionary<string, int> products = new Dictionary<string, int>();
+            Dictionary<int, int> products = new Dictionary<int, int>();
 
-            Dictionary<string, int> sortedBehaviors = countAndSortBehavior(v.Behaviors, products);
+            Dictionary<int, int> sortedBehaviors = countAndSortBehavior(v.Behaviors, products);
 
             List<int> TopProducts = new List<int>();
 
@@ -136,7 +136,7 @@ namespace RecommendationAPI.Business {
                 if (sortedBehaviors.Count < i + 1) {
                     break;
                 }
-                TopProducts.Add(int.Parse(sortedBehaviors.ElementAt(i).Key));
+                TopProducts.Add(sortedBehaviors.ElementAt(i).Key);
             }
             _db.InsertTopProduct(visitorUID, TopProducts, database);
         }
@@ -153,13 +153,13 @@ namespace RecommendationAPI.Business {
 
         public void CalculateMonthlyTop(string database, DateTime from) {
             List<Behavior> monthlyBehaviors = _db.GetMonthlyBehaviors(database, from).Result;
-            Dictionary<string, int> behaviors = new Dictionary<string, int>();
-            Dictionary<string, int> sortedBehaviors = countAndSortBehavior(monthlyBehaviors, behaviors);
+            Dictionary<int, int> behaviors = new Dictionary<int, int>();
+            Dictionary<int, int> sortedBehaviors = countAndSortBehavior(monthlyBehaviors, behaviors);
             int length = 20;
             if(sortedBehaviors.Count < length) {
                 length = sortedBehaviors.Count;
             }
-            List<string> top20Products = new List<string>();
+            List<int> top20Products = new List<int>();
             for (int i = 0; i < length; i++) {
                 top20Products.Add(sortedBehaviors.Keys.ElementAt(i));
             }

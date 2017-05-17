@@ -37,10 +37,10 @@ namespace RecommendationAPI.Controllers {
         // PUT behavior/visitorUID/behaviorType/ItemID/database
         [Route("/behavior/{visitorUID}/{behaviorType}/{itemID}/{database}")]
         [HttpPut("{visitorUID}/{behaviorType}/{itemID}/{database}")]
-        public void Put(string visitorUID, string behaviorType, string itemID, string database) {
-            dm.CreateBehavior(visitorUID, f.CreateBehavior(itemID.ToUpper(), behaviorType.ToUpper()), database.ToUpper());
+        public void Put(string visitorUID, string behaviorType, int itemID, string database) {
+            dm.CreateBehavior(visitorUID, f.CreateBehavior(itemID, behaviorType.ToUpper()), database.ToUpper());
             pr.CalculateTopProducts(visitorUID, database.ToUpper());
-            cf.CalculateScoreForProduct(int.Parse(itemID), database.ToUpper());
+            cf.CalculateScoreForProduct(itemID, database.ToUpper());
           
         }
 
@@ -54,7 +54,7 @@ namespace RecommendationAPI.Controllers {
         }
 
         // GET "Updatevisitortopproducts/database/password
-        [Route("/updatevisitortopproducts/{database}/{password}")]
+        [Route("/updatevisitorTopProducts/{database}/{password}")]
         [HttpGet("{database}/{password}")]
         public void GetUpdateVisitorTopProducts(string database, string password) {
             if (password == "supersecretpassword") {
@@ -89,6 +89,6 @@ namespace RecommendationAPI.Controllers {
                 DateTime today = new DateTime(2017, 3, 1);
                 pr.CalculateMonthlyTop(database.ToUpper(), today.AddDays(-30));
             }
-        }
+        }   
     }
 }

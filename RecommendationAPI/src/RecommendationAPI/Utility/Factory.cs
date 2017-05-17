@@ -13,7 +13,7 @@ namespace RecommendationAPI.Utility {
             return new Visitor(visitorUID, profileUID, customerUID, behaviors);
         }
 
-        public Behavior CreateBehaviorTest(string type, string id, DateTime timeStamp) {
+        public Behavior CreateBehaviorTest(string type, int id, DateTime timeStamp) {
             return new Behavior(type, id, timeStamp);
         }
 
@@ -26,10 +26,10 @@ namespace RecommendationAPI.Utility {
             foreach (BsonDocument bd in bsonBehaviors.Values) {
                 if (bd["Type"] == "PRODUCTVIEW") {
                     try {
-                        behaviors.Add(new Behavior(bd["Type"].AsString, bd["Id"].AsString, bd["Timestamp"].ToUniversalTime()));
+                        behaviors.Add(new Behavior(bd["Type"].AsString, bd["Id"].AsInt32, bd["Timestamp"].ToUniversalTime()));
                     } catch (InvalidCastException exception) {
                         Debug.WriteLine(exception.Data);
-                    }
+                    }   
                 }
             }
             if (visitorDoc["ProfileUID"] != BsonNull.Value && visitorDoc["CustomerUID"] != BsonNull.Value) {
@@ -47,7 +47,7 @@ namespace RecommendationAPI.Utility {
             return new Product(product["_id"].AsInt32, product["Created"].ToUniversalTime(), product["Description"].AsString, product["ProductGroupId"].AsInt32);
         }
 
-        public Behavior CreateBehavior(string itemID, string behaviorType) {
+        public Behavior CreateBehavior(int itemID, string behaviorType) {
             return new Behavior(behaviorType, itemID, DateTime.Now);
         }
     }

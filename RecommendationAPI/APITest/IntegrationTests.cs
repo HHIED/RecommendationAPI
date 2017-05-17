@@ -29,8 +29,13 @@ namespace APITest
         }
 
         [Fact]
+        public void InsertNonExistingVisitor() {
+            
+        }
+
+        [Fact]
         public void GetProductRecommendationValidArguments() {
-            Assert.Equal(new string[] { "36991", "40786", "38104", "41594", "31573" }, rc.GetRecommendationForVisitor(validVisitorUID, 5, validDatabaseName));
+            
         }
 
         [Fact]

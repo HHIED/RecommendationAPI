@@ -279,13 +279,13 @@ namespace RecommendationAPI.Business {
             List<Behavior> monthlyBehaviors = new List<Behavior>();
             foreach(BsonDocument visitor in result) {
                 foreach(BsonDocument behavior in visitor["Behaviors"].AsBsonArray) {
-                    monthlyBehaviors.Add(factory.CreateBehavior(behavior["Id"].AsString, behavior["Type"].AsString));
+                    monthlyBehaviors.Add(factory.CreateBehavior(behavior["Id"].AsInt32, behavior["Type"].AsString));
                 }
             }
             return monthlyBehaviors;
         }
 
-        public async void StoreTop20Products(List<string> top20Products, string database) {
+        public async void StoreTop20Products(List<int> top20Products, string database) {
             _database = _client.GetDatabase(database);
             var collection = _database.GetCollection<BsonDocument>("MonthlyTop20");
             var filter = Builders<BsonDocument>.Filter.Eq("_id", "top20");
@@ -299,7 +299,7 @@ namespace RecommendationAPI.Business {
             }
             var clear = Builders<BsonDocument>.Update.Set("TopProducts", new BsonArray());
             var clearResult = await collection.UpdateOneAsync(filter, clear);
-            foreach (string i in top20Products) {
+            foreach (int i in top20Products) {
                 var update = Builders<BsonDocument>.Update
                   .Push("TopProducts", i);
                 var result = await collection.UpdateOneAsync(filter, update);

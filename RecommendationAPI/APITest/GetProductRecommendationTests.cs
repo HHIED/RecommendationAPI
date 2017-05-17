@@ -9,7 +9,6 @@ using Xunit.Sdk;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Linq;
-using RecommendationAPI.Dummy;
 
 namespace Tests
 {
@@ -34,7 +33,7 @@ namespace Tests
         }
 
         public GetProductRecommendationTests() {
-            pr = new ProductRecommender(new DummyDatabase());
+            
         }
         
         [Fact]
