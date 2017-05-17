@@ -33,55 +33,5 @@ namespace APITest
             
         }
 
-        [Fact]
-        public void GetProductRecommendationValidArguments() {
-            
-        }
-
-        [Fact]
-        public void GetProductRecommendationNonExistingVisitorUID() {
-            Assert.True(rc.GetRecommendationForVisitor(nonExistingVisitorUID, 5, validDatabaseName) == null);
-        }
-
-        [Fact]
-        public void GetProductRecommendationUppercaseVisitorUID() {
-            Assert.Equal(new string[] { "36991", "40786", "38104", "41594", "31573" }, rc.GetRecommendationForVisitor(validVisitorUID.ToUpper(), 5, validDatabaseName));
-        }
-
-        [Fact]
-        public void GetProductRecommendationLowercaseVisitorUID() {
-            Assert.Equal(new string[] { "36991", "40786", "38104", "41594", "31573" }, rc.GetRecommendationForVisitor(validVisitorUID.ToLower(), 5, validDatabaseName));
-        }
-
-        [Fact]
-        public void GetProductRecommendationUppercaseDatabaseName() {
-            Assert.Equal(new string[] { "36991", "40786", "38104", "41594", "31573" }, rc.GetRecommendationForVisitor(validVisitorUID, 5, validDatabaseName.ToUpper()));
-        }
-
-        [Fact]
-        public void GetProductRecommendationLowercaseDatabaseName() {
-            Assert.Equal(new string[] { "36991", "40786", "38104", "41594", "31573" }, rc.GetRecommendationForVisitor(validVisitorUID, 5, validDatabaseName.ToLower()));
-        }
-
-        [Fact]
-        public void NumberOfProductRecommendationsLargerThanAvailable() {
-            Assert.Equal(56, rc.GetRecommendationForVisitor(validVisitorUID, 1000, validDatabaseName).Count<string>());
-        }
-
-        [Fact]
-        public void NumberOfProductRecommendationsLessOrEqualZero() {
-            Assert.True(rc.GetRecommendationForVisitor(validVisitorUID, 0, validDatabaseName) == null);
-            Assert.True(rc.GetRecommendationForVisitor(validVisitorUID, -15, validDatabaseName) == null);
-        }
-
-        [Fact]
-        public void NonExistingDatabase() {
-            Assert.True(rc.GetRecommendationForVisitor(validVisitorUID, 5, nonExistingDatabaseName) == null);
-        }
-
-        [Fact]
-        public void ExistingVisitorWithNoBehaviorData() {
-            Assert.Equal(null, rc.GetRecommendationForVisitor(visitorWithoutBehaviorData, 5, validDatabaseName));
-        }
     }
 }
