@@ -126,19 +126,21 @@ namespace RecommendationAPI.Business {
         public void CalculateTopProducts(string visitorUID, string database) {
 
             Visitor v = _db.GetVisitor(visitorUID, database).Result;
-            Dictionary<int, int> products = new Dictionary<int, int>();
+            if (v != null) {
+                Dictionary<int, int> products = new Dictionary<int, int>();
 
-            Dictionary<int, int> sortedBehaviors = countAndSortBehavior(v.Behaviors, products);
+                Dictionary<int, int> sortedBehaviors = countAndSortBehavior(v.Behaviors, products);
 
-            List<int> TopProducts = new List<int>();
+                List<int> TopProducts = new List<int>();
 
-            for (int i = 0; i < 5; i++) {
-                if (sortedBehaviors.Count < i + 1) {
-                    break;
+                for (int i = 0; i < 5; i++) {
+                    if (sortedBehaviors.Count < i + 1) {
+                        break;
+                    }
+                    TopProducts.Add(sortedBehaviors.ElementAt(i).Key);
                 }
-                TopProducts.Add(sortedBehaviors.ElementAt(i).Key);
+                _db.InsertTopProduct(visitorUID, TopProducts, database);
             }
-            _db.InsertTopProduct(visitorUID, TopProducts, database);
         }
 
         public void CalculateAllTopProducts(string database) {

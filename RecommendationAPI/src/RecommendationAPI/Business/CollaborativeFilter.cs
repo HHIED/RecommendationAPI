@@ -20,9 +20,10 @@ namespace RecommendationAPI.Business {
 
         public void CalculateScoreForProduct(int productUID, string database) {
             Product initialProduct = db.GetProduct(productUID, database).Result;
-            Dictionary<int, double> productScores = new Dictionary<int, double>();
-            BsonArray visitors = db.GetVisitorsForProduct(productUID, database).Result;
-            foreach (BsonString visitorId in visitors.Values) {
+            if (initialProduct != null) {
+                Dictionary<int, double> productScores = new Dictionary<int, double>();
+                BsonArray visitors = db.GetVisitorsForProduct(productUID, database).Result;
+                foreach (BsonString visitorId in visitors.Values) {
                     List<int> visitorProducts = db.GetVisitorProducts(visitorId.AsString, database).Result;
                     if (visitorProducts != null) {
                         foreach (int product in visitorProducts) {
@@ -32,30 +33,31 @@ namespace RecommendationAPI.Business {
                                 productScores.Add(product, 1);
                             }
                         }
+                    }
                 }
+                Dictionary<int, double> sortedScores = CountAndSortBehavior(productScores);
+
+                if (sortedScores.Count > 100) {
+                    //Only calculate top 100 product scores
+                    for (int i = 0; i < 100; i++) {
+                        int productId = sortedScores.ElementAt(i).Key;
+                        Product compareProduct = db.GetProduct(productId, database).Result;
+                        sortedScores[productId] = CalculateSimilarityScore(initialProduct, compareProduct, sortedScores[productId]);
+                    }
+                } else {
+                    foreach (int productId in productScores.Keys) {
+                        Product compareProduct = db.GetProduct(productId, database).Result;
+                        sortedScores[productId] = CalculateSimilarityScore(initialProduct, compareProduct, sortedScores[productId]);
+                    }
+                }
+
+                sortedScores = CountAndSortBehavior(sortedScores);
+                Dictionary<int, double> top10ProductsAndScores = sortedScores.Take(10).ToDictionary(pair => pair.Key, pair => pair.Value);
+
+                db.InsertScore(initialProduct.ProductUID, top10ProductsAndScores, database);
+
+                Debug.WriteLine("Product " + initialProduct.ProductUID + " updated");
             }
-            Dictionary<int, double> sortedScores = CountAndSortBehavior(productScores);
-
-            if (sortedScores.Count > 100) {
-                //Only calculate top 100 product scores
-                for (int i = 0; i < 100; i++) {
-                    int productId = sortedScores.ElementAt(i).Key;
-                    Product compareProduct = db.GetProduct(productId, database).Result;
-                    sortedScores[productId] = CalculateSimilarityScore(initialProduct, compareProduct, sortedScores[productId]);
-                }
-            } else {
-                foreach (int productId in productScores.Keys) {
-                    Product compareProduct = db.GetProduct(productId, database).Result;
-                    sortedScores[productId] = CalculateSimilarityScore(initialProduct, compareProduct, sortedScores[productId]);
-                }
-            }
-
-            sortedScores = CountAndSortBehavior(sortedScores);
-            Dictionary<int, double> top10ProductsAndScores = sortedScores.Take(10).ToDictionary(pair => pair.Key, pair => pair.Value);
-
-            db.InsertScore(initialProduct.ProductUID, top10ProductsAndScores, database);
-
-            Debug.WriteLine("Product " + initialProduct.ProductUID + " updated");
         }
 
 

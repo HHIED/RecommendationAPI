@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using MongoDB.Driver;
 
 namespace RecommendationAPI.Business
 {
@@ -23,6 +24,7 @@ namespace RecommendationAPI.Business
 
         public void CreateVisitor(string visitorUID, string database) {
             _db.insertVisitor(visitorUID, database);
+
         }
     }
 }

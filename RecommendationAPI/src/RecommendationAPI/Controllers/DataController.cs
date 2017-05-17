@@ -23,21 +23,21 @@ namespace RecommendationAPI.Controllers {
         // PUT visitor/visitorUID/database
         [Route("/visitor/{visitorUID}/{database}")]
         [HttpPut("{visitorUID}/{database}")]
-        public void Put(string visitorUID, string database) {
+        public void PutVisitor(string visitorUID, string database) {
             dm.CreateVisitor(visitorUID.ToUpper(), database.ToUpper());
         }
 
         // PUT product/productUID/description/productGroup/database
         [Route("/product/{productUID}/{description}/{productgroup}/{database}")]
         [HttpPut("{productUID}/{description}/{productgroup}/{database}")]
-        public void Put(int productUID, string description, int productgroup, string database) {
+        public void PutProduct(int productUID, string description, int productgroup, string database) {
             dm.CreateProduct(f.CreateProduct(productUID, description.ToUpper(), productgroup), database.ToUpper());
         }
 
         // PUT behavior/visitorUID/behaviorType/ItemID/database
         [Route("/behavior/{visitorUID}/{behaviorType}/{itemID}/{database}")]
         [HttpPut("{visitorUID}/{behaviorType}/{itemID}/{database}")]
-        public void Put(string visitorUID, string behaviorType, int itemID, string database) {
+        public void PutBehavior(string visitorUID, string behaviorType, int itemID, string database) {
             dm.CreateBehavior(visitorUID, f.CreateBehavior(itemID, behaviorType.ToUpper()), database.ToUpper());
             pr.CalculateTopProducts(visitorUID, database.ToUpper());
             cf.CalculateScoreForProduct(itemID, database.ToUpper());

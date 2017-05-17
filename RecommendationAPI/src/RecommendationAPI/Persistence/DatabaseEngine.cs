@@ -31,7 +31,7 @@ namespace RecommendationAPI.Business {
             List<BsonDocument> result = await collection.Find(filter).ToListAsync();
 
             if(result.Count == 0) {
-                throw new InvalidOperationException();
+                return null;
             }
 
             return factory.CreateVisitor(result);
@@ -63,43 +63,51 @@ namespace RecommendationAPI.Business {
 
         public async void insertVisitor(string visitorUID, string database) {
             try {
-                _database = _client.GetDatabase(database);
-                var collection = _database.GetCollection<BsonDocument>("Visitor");
-                BsonDocument newVisitor = new BsonDocument {
-                {"_id",  visitorUID},
-                {"Behaviors", new BsonArray()},
-                {"ProfileUID",  ""},
-                {"CustomerUID", "" }
-            };
-                await collection.InsertOneAsync(newVisitor);
-            } catch(MongoWriteException ex) {
-                throw ex;
+                if (CheckForDatabase(database)) {
+                    _database = _client.GetDatabase(database);
+                    var collection = _database.GetCollection<BsonDocument>("Visitor");
+                    BsonDocument newVisitor = new BsonDocument {
+                    {"_id",  visitorUID},
+                    {"Behaviors", new BsonArray()},
+                    {"ProfileUID",  ""},
+                    {"CustomerUID", "" }
+                    };
+                
+                    await collection.InsertOneAsync(newVisitor);
+                }
+            } catch (MongoWriteException ex) {
+                Console.Write(ex.Message);
             }
         }
 
         public async void InsertProduct(Product p, string database) {
             try {
-                _database = _client.GetDatabase(database);
-                var collection = _database.GetCollection<BsonDocument>("Product");
-                BsonDocument newProduct = new BsonDocument {
-                {"_id",  p.ProductUID},
-                {"VisitorId", new BsonArray() },
-                {"Description", p.Description},
-                {"Created",  new BsonDateTime(DateTime.Now)}
-            };
-                await collection.InsertOneAsync(newProduct);
+                if (CheckForDatabase(database)) {
+                    _database = _client.GetDatabase(database);
+                    var collection = _database.GetCollection<BsonDocument>("Product");
+                    BsonDocument newProduct = new BsonDocument {
+                    {"_id",  p.ProductUID},
+                    {"VisitorId", new BsonArray() },
+                    {"Description", p.Description},
+                    {"ProductGroupId", p.ProductGroup },
+                    {"Created",  new BsonDateTime(DateTime.Now)}
+                    };
+                    await collection.InsertOneAsync(newProduct);
+                }
             } catch (MongoWriteException ex) {
-                throw ex;
+                Console.Write(ex.Message);
             }
         }
 
         public void InsertBehavior(string visitorUID, Behavior behavior, string database) {
             try {
-                insertBehaviorOnVisitor(visitorUID, behavior, database);
-                if (behavior.Type == "PRODUCTVIEW") {
-                    insertBehaviorOnProduct(visitorUID, behavior, database);
-                } else if (behavior.Type == "PRODUCTGROUPVIEW") {
-                    insertBehaviorOnProductGroup(visitorUID, behavior, database);
+                if (CheckForDatabase(database)) {
+                    insertBehaviorOnVisitor(visitorUID, behavior, database);
+                    if (behavior.Type == "PRODUCTVIEW") {
+                        insertBehaviorOnProduct(visitorUID, behavior, database);
+                    } else if (behavior.Type == "PRODUCTGROUPVIEW") {
+                        insertBehaviorOnProductGroup(visitorUID, behavior, database);
+                    }
                 }
             } catch (MongoWriteException ex) {
                 throw ex;
@@ -159,6 +167,10 @@ namespace RecommendationAPI.Business {
             var filter = builder.Eq("_id", productUID);
             var result = await collection.Find(filter).ToListAsync();
 
+            if(result.Count==0) {
+                return null;
+            }
+
             return factory.CreateProduct(result[0]);
         }
 
@@ -173,7 +185,11 @@ namespace RecommendationAPI.Business {
                 BsonDocument visitor = result[0];
                 foreach (BsonDocument behavior in visitor["Behaviors"].AsBsonArray) {
                     if (behavior["Type"].AsString == "PRODUCTVIEW") {
-                        visitorProducts.Add(int.Parse(behavior["Id"].AsString));
+                        if (behavior["Id"].IsString) {
+                            visitorProducts.Add(int.Parse(behavior["Id"].AsString));
+                        } else {
+                            visitorProducts.Add(behavior["Id"].AsInt32);
+                        }
                     }
                 }
             }
