@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Mvc;
 using RecommendationAPI.Business;
 using RecommendationAPI.Utility;
 using System.Web.Http;
+using System.Net.Http;
+using System.Net;
 
 // For more information on enabling Web API for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -23,72 +25,81 @@ namespace RecommendationAPI.Controllers {
         // PUT visitor/visitorUID/database
         [Route("/visitor/{visitorUID}/{database}")]
         [HttpPut("{visitorUID}/{database}")]
-        public void PutVisitor(string visitorUID, string database) {
-            dm.CreateVisitor(visitorUID.ToUpper(), database.ToUpper());
+        public HttpStatusCode PutVisitor(string visitorUID, string database) {
+            return dm.CreateVisitor(visitorUID.ToUpper(), database.ToUpper());
         }
 
         // PUT product/productUID/description/productGroup/database
         [Route("/product/{productUID}/{description}/{productgroup}/{database}")]
         [HttpPut("{productUID}/{description}/{productgroup}/{database}")]
-        public void PutProduct(int productUID, string description, int productgroup, string database) {
-            dm.CreateProduct(f.CreateProduct(productUID, description.ToUpper(), productgroup), database.ToUpper());
+        public HttpStatusCode PutProduct(int productUID, string description, int productgroup, string database) {
+            return dm.CreateProduct(f.CreateProduct(productUID, description.ToUpper(), productgroup), database.ToUpper());
         }
 
         // PUT behavior/visitorUID/behaviorType/ItemID/database
         [Route("/behavior/{visitorUID}/{behaviorType}/{itemID}/{database}")]
         [HttpPut("{visitorUID}/{behaviorType}/{itemID}/{database}")]
-        public void PutBehavior(string visitorUID, string behaviorType, int itemID, string database) {
-            dm.CreateBehavior(visitorUID, f.CreateBehavior(itemID, behaviorType.ToUpper()), database.ToUpper());
-            pr.CalculateTopProducts(visitorUID, database.ToUpper());
-            cf.CalculateScoreForProduct(itemID, database.ToUpper());
-          
+        public HttpStatusCode PutBehavior(string visitorUID, string behaviorType, int itemID, string database) {
+            HttpStatusCode status = dm.CreateBehavior(visitorUID, f.CreateBehavior(itemID, behaviorType.ToUpper()), database.ToUpper());
+            if(status == HttpStatusCode.OK) {
+                pr.CalculateTopProducts(visitorUID, database.ToUpper());
+                cf.CalculateScoreForProduct(itemID, database.ToUpper());
+            }
+
+            return status;
+
         }
 
         // GET "Update/database/password
         [Route("/update/{database}/{password}")]
-        [HttpGet("{database}/{password}")]
-        public void GetUpdate(string database, string password) {
+        [HttpPut("{database}/{password}")]
+        public HttpStatusCode GetUpdate(string database, string password) {
             if (password == "supersecretpassword") {
                 cf.BuildCollaborativeFilter(database.ToUpper());
             }
+            return HttpStatusCode.OK;
         }
 
         // GET "Updatevisitortopproducts/database/password
         [Route("/updatevisitorTopProducts/{database}/{password}")]
-        [HttpGet("{database}/{password}")]
-        public void GetUpdateVisitorTopProducts(string database, string password) {
+        [HttpPut("{database}/{password}")]
+        public HttpStatusCode GetUpdateVisitorTopProducts(string database, string password) {
             if (password == "supersecretpassword") {
                 pr.CalculateAllTopProducts(database.ToUpper());
             }
+            return HttpStatusCode.OK;
         }
 
         // GET "Updatevisitortopproducts/visitorUID/database/password
         [Route("/updatevisitortopproducts/{visitorUID}/{database}/{password}")]
-        [HttpGet("{database}/{visitorUID}/{password}")]
-        public void GetUpdateVisitorTopProducts(string database, string visitorUID, string password) {
+        [HttpPut("{database}/{visitorUID}/{password}")]
+        public HttpStatusCode GetUpdateVisitorTopProducts(string database, string visitorUID, string password) {
             if (password == "supersecretpassword") {
                 pr.CalculateTopProducts(visitorUID.ToUpper(), database.ToUpper());
             }
+            return HttpStatusCode.OK;
         }
 
         // GET "calculateTop20/database/password
         [Route("/calculatetop20/{database}/{password}")]
-        [HttpGet("{database}/{password}")]
-        public void CalculateTop20(string database, string password) {
+        [HttpPut("{database}/{password}")]
+        public HttpStatusCode CalculateTop20(string database, string password) {
             if (password == "supersecretpassword") {
                 DateTime today = DateTime.Now;
                 pr.CalculateMonthlyTop(database.ToUpper(), today.AddDays(-30));
             }
+            return HttpStatusCode.OK;
         }
 
         // GET "calculateTop20/database/password
         [Route("/calculatetop20test/{database}/{password}")]
-        [HttpGet("{database}/{password}")]
-        public void CalculateTop20Test(string database, string password) {
+        [HttpPut("{database}/{password}")]
+        public HttpStatusCode CalculateTop20Test(string database, string password) {
             if (password == "supersecretpassword") {
                 DateTime today = new DateTime(2017, 3, 1);
                 pr.CalculateMonthlyTop(database.ToUpper(), today.AddDays(-30));
             }
+            return HttpStatusCode.OK;
         }   
     }
 }

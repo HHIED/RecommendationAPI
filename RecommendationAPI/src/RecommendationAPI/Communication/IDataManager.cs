@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 
 namespace RecommendationAPI.Business
@@ -8,8 +9,8 @@ namespace RecommendationAPI.Business
     interface IDataManager
     {
 
-        void CreateVisitor(string visitorUID, string database);
-        void CreateProduct(Product p, string database);
-        void CreateBehavior(string visitorUID, Behavior behavior, string database);
+        HttpStatusCode CreateVisitor(string visitorUID, string database);
+        HttpStatusCode CreateProduct(Product p, string database);
+        HttpStatusCode CreateBehavior(string visitorUID, Behavior behavior, string database);
     }
 }

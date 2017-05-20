@@ -7,6 +7,7 @@ using RecommendationAPI.Controllers;
 using RecommendationAPI.Business;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
+using System.Net;
 
 namespace APITest
 {
@@ -35,48 +36,50 @@ namespace APITest
 
         [Fact]
         public void createVisitor() {
-            dc.PutVisitor("TestVisitorUID", validDatabaseName);
-            Visitor v = db.GetVisitor("TESTVISITORUID", validDatabaseName).Result;
-            Assert.NotNull(v);
+            HttpStatusCode status = dc.PutVisitor("TestVisitorUID", validDatabaseName);
+            Assert.Equal(HttpStatusCode.Created, status);
         }
 
         [Fact]
         public void createVisitorDuplicate() {
-            dc.PutVisitor(validVisitorUID, validDatabaseName);
+            HttpStatusCode status = dc.PutVisitor(validVisitorUID, validDatabaseName);
+            Assert.Equal(HttpStatusCode.BadRequest, status);
         }
 
         [Fact]
         public void createVisitorNonExistingDatabase() {
-            dc.PutVisitor(validVisitorUID, nonExistingDatabaseName);
+            HttpStatusCode status = dc.PutVisitor(validVisitorUID, nonExistingDatabaseName);
+            Assert.Equal(HttpStatusCode.BadRequest, status);
         }
 
         [Fact]
         public void createProduct() {
-            dc.PutProduct(123, "description", existingProductGroup, validDatabaseName);
-            Product p = db.GetProduct(123, validDatabaseName).Result;
-            Assert.NotNull(p);
+            HttpStatusCode status = dc.PutProduct(123, "description", existingProductGroup, validDatabaseName);
+            Assert.Equal(HttpStatusCode.Created, status);
         }
 
         [Fact]
         public void createProductDuplicate() {
-            dc.PutProduct(existingProduct, "description", existingProductGroup, validDatabaseName);
+            HttpStatusCode status = dc.PutProduct(existingProduct, "description", existingProductGroup, validDatabaseName);
+            Assert.Equal(HttpStatusCode.BadRequest, status);
         }
 
         [Fact]
         public void createProductNonExistingDatabase() {
-            dc.PutProduct(existingProduct, "description", existingProductGroup, nonExistingDatabaseName);
+            HttpStatusCode status = dc.PutProduct(existingProduct, "description", existingProductGroup, nonExistingDatabaseName);
+            Assert.Equal(HttpStatusCode.BadRequest, status);
         }
 
         [Fact]
         public void createBehavior() {
-            dc.PutBehavior("TESTVISITOR", "productview", 123, validDatabaseName);
-            Visitor v = db.GetVisitor("TESTVISITOR", validDatabaseName).Result;
-            Assert.NotNull(v.Behaviors);
+            HttpStatusCode status = dc.PutBehavior("TESTVISITOR", "productview", 123, validDatabaseName);
+            Assert.Equal(HttpStatusCode.OK, status);
         }
 
         [Fact]
         public void createBehaviorNonExistingDatabase() {
-            dc.PutBehavior("TESTVISITOR", "productview", 123, nonExistingDatabaseName);
+            HttpStatusCode status= dc.PutBehavior("TESTVISITOR", "productview", 123, nonExistingDatabaseName);
+            Assert.Equal(HttpStatusCode.BadRequest, status);
         }
 
 

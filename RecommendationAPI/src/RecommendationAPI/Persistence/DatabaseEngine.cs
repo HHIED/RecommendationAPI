@@ -7,6 +7,7 @@ using MongoDB.Driver;
 using MongoDB.Bson;
 using RecommendationAPI.Utility;
 using System.Diagnostics;
+using System.Net;
 
 namespace RecommendationAPI.Business {
     public class DatabaseEngine : IDatabaseEngine {
@@ -61,7 +62,7 @@ namespace RecommendationAPI.Business {
             return visitorLists;
         }
 
-        public async void insertVisitor(string visitorUID, string database) {
+        public async Task<HttpStatusCode> insertVisitor(string visitorUID, string database) {
             try {
                 if (CheckForDatabase(database)) {
                     _database = _client.GetDatabase(database);
@@ -74,13 +75,18 @@ namespace RecommendationAPI.Business {
                     };
                 
                     await collection.InsertOneAsync(newVisitor);
+                    return HttpStatusCode.Created;
+                } else {
+                    return HttpStatusCode.BadRequest;
                 }
             } catch (MongoWriteException ex) {
                 Console.Write(ex.Message);
+                return HttpStatusCode.BadRequest;
+                
             }
         }
 
-        public async void InsertProduct(Product p, string database) {
+        public async Task<HttpStatusCode> InsertProduct(Product p, string database) {
             try {
                 if (CheckForDatabase(database)) {
                     _database = _client.GetDatabase(database);
@@ -93,45 +99,56 @@ namespace RecommendationAPI.Business {
                     {"Created",  new BsonDateTime(DateTime.Now)}
                     };
                     await collection.InsertOneAsync(newProduct);
+                    return HttpStatusCode.Created;
+                } else {
+                    return HttpStatusCode.BadRequest;
                 }
             } catch (MongoWriteException ex) {
                 Console.Write(ex.Message);
+                return HttpStatusCode.BadRequest;
             }
         }
 
-        public void InsertBehavior(string visitorUID, Behavior behavior, string database) {
+        public HttpStatusCode InsertBehavior(string visitorUID, Behavior behavior, string database) {
             try {
                 if (CheckForDatabase(database)) {
-                    insertBehaviorOnVisitor(visitorUID, behavior, database);
+                        insertBehaviorOnVisitor(visitorUID, behavior, database);
                     if (behavior.Type == "PRODUCTVIEW") {
-                        insertBehaviorOnProduct(visitorUID, behavior, database);
+                        return insertBehaviorOnProduct(visitorUID, behavior, database).Result;
                     } else if (behavior.Type == "PRODUCTGROUPVIEW") {
-                        insertBehaviorOnProductGroup(visitorUID, behavior, database);
+                        return insertBehaviorOnProductGroup(visitorUID, behavior, database).Result;
+                    } else {
+                        return HttpStatusCode.BadRequest;
                     }
+                } else {
+                    return HttpStatusCode.BadRequest;
                 }
             } catch (MongoWriteException ex) {
-                throw ex;
+                Console.Write(ex.Message);
+                return HttpStatusCode.BadRequest;
             }
 
 
         }
 
-        private async void insertBehaviorOnProductGroup(string visitorUID, Behavior behavior, string database) {
+        private async Task<HttpStatusCode> insertBehaviorOnProductGroup(string visitorUID, Behavior behavior, string database) {
             _database = _client.GetDatabase(database);
             var collection = _database.GetCollection<BsonDocument>("ProductGroup");
             var filter = Builders<BsonDocument>.Filter.Eq("_id", behavior.Id);
             var update = Builders<BsonDocument>.Update
                 .Push("VisitorId", visitorUID);
             var result = await collection.UpdateOneAsync(filter, update);
+            return HttpStatusCode.OK;
         }
 
-        private async void insertBehaviorOnProduct(string visitorUID, Behavior behavior, string database) {
+        private async Task<HttpStatusCode> insertBehaviorOnProduct(string visitorUID, Behavior behavior, string database) {
             _database = _client.GetDatabase(database);
             var collection = _database.GetCollection<BsonDocument>("Product");
             var filter = Builders<BsonDocument>.Filter.Eq("_id", behavior.Id);
             var update = Builders<BsonDocument>.Update
                 .Push("VisitorId", visitorUID);
             var result = await collection.UpdateOneAsync(filter, update);
+            return HttpStatusCode.OK;
         }
 
         private async void insertBehaviorOnVisitor(string visitorUID, Behavior behavior, string database) {
